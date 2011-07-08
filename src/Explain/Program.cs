@@ -81,14 +81,60 @@ namespace Explain
         {
             public string Line;
             public int ScopeDepth;
-            public string CurrentNamespace;
+            public List<string> Namespace;
             public string MultilineComment;
-            public readonly Stack<int> ClassScopeDepths = new Stack<int>(2);
-            public readonly Stack<int> NamespaceScopeDepths = new Stack<int>(2);
 
             public bool EOF
             {
                 get { return this.Line == null; }
+            }
+        }
+
+        class Tokenizer
+        {
+            public const char CHAR_LITERAL = '\'';
+            public const char STRING_LITERAL = '\"';
+            public const char BLOCK_BEGIN = '{';
+            public const char BLOCK_END = '}';
+
+            public static Queue<string> Tokenize(StreamReader reader)
+            {
+                var token = new StringBuilder();
+                var result = new Queue<string>(64);
+
+                Action pushtoken = new Action(() =>
+                {
+                    if (token.Length > 0)
+                    {
+                        result.Enqueue(token.ToString());
+                        token.Clear();
+                    }
+                });
+
+                while(reader.Peek() >= 0) {
+                    char c = (char)reader.Read();
+
+                    if (Char.IsWhiteSpace(c))
+                    {
+                        pushtoken();
+                        continue;
+                    }
+
+                    if (c == BLOCK_BEGIN ||
+                        c == BLOCK_END ||
+                        c == CHAR_LITERAL ||
+                        c == STRING_LITERAL)
+                    {
+                        pushtoken();
+                        token.Append(c);
+                        pushtoken();
+                        continue;
+                    }
+
+                    token.Append(c);
+                }
+
+                return result;
             }
         }
 
@@ -105,86 +151,12 @@ namespace Explain
 
                 Verbose("Open: {0}", codefile);
 
+                Queue<string> tokens = null;
                 using (StreamReader reader = new StreamReader(codefile))
                 {
-                    FileContext fc = new FileContext()
-                    {
-                        Line = reader.ReadLine(),
-                        CurrentNamespace = String.Empty,
-                        ScopeDepth = 0,
-                        MultilineComment = String.Empty
-                    };
-                    
-                    while(!fc.EOF) {
-                        var linecomment = fc.Line.MatchesPattern(@"[^\'\"]//(.+)$", "c");
-                        var scope_enter = fc.Line.IndexOf('{');
-                        var scope_exit = fc.Line.IndexOf('}');
-
-                        if (scope_enter >= 0 && (linecomment.MatchCount == 0 || linecomment.Begin(0) > scope_enter))
-                        {
-                            fc.ScopeDepth++;
-                            Verbose("Scope enter, depth {0}: {1}", fc.ScopeDepth, fc.Line);
-                        }
-                        
-                        if (scope_exit > scope_enter && (linecomment.MatchCount == 0 || linecomment.Begin(0) > scope_exit))
-                        {
-                            fc.ScopeDepth--;
-                            Verbose("Scope exit, depth {0}: {1}", fc.ScopeDepth, fc.Line);
-                        }
-
-                        if (fc.NamespaceScopeDepths.Count > 0 && fc.ScopeDepth == fc.NamespaceScopeDepths.Peek())
-                        {
-                            Verbose("Namespace [{0}], depth [1]", fc.CurrentNamespace, fc.ScopeDepth);
-
-                            int remaining = fc.CurrentNamespace.LastIndexOf(".");
-                            fc.CurrentNamespace = remaining >= 0 ? fc.CurrentNamespace.Substring(0, remaining) : String.Empty;
-                            fc.NamespaceScopeDepths.Pop();
-                        } else if (fc.ClassScopeDepths.Count > 0 && fc.ScopeDepth == fc.ClassScopeDepths.Peek())
-                        {
-                            Verbose("Namespace [{0}], depth [1]", fc.CurrentNamespace, fc.ScopeDepth);
-
-                            int remaining = fc.CurrentNamespace.LastIndexOf(".");
-                            fc.CurrentNamespace = remaining >= 0 ? fc.CurrentNamespace.Substring(0, remaining) : String.Empty;
-                            fc.ClassScopeDepths.Pop();
-                        }
-
-                        var ns = fc.Line.FindPattern(@"^\s*namespace\s+([\w\.]+)", "c", 1);
-                        if (ns != null) {
-                            fc.CurrentNamespace += (fc.CurrentNamespace.Length > 0 ? "." : "") + ns;
-                            fc.NamespaceScopeDepths.Push(fc.ScopeDepth);
-
-                            Verbose("Namespace [{0}], depth [1]", fc.CurrentNamespace, fc.ScopeDepth);
-                        }
-
-                        var type = fc.Line.MatchesPattern(@"^(?:public)?(?:static|private|internal|protected|\s+)*(class|interface|struct|enum|delegate [\w<>]+)\s+([\w<>]+)", "c");
-
-                        if (type.MatchCount > 0)
-                        {
-                            Verbose("Type encountered ({0}): {1}", type[1], type[2]);
-
-                            string typeFlavor = type[1];
-                            string name = type[2];
-
-                            if (ass != null)
-                            {
-                                Type t = ass.GetType(fc.CurrentNamespace + (fc.ClassScopeDepths.Count > 0 && fc.ScopeDepth - 1 == fc.ClassScopeDepths.Peek() ? "+" : ".") + name);
-
-                                Verbose("...Found in assembly {0}", t.ToString());
-                            }
-
-                            if (typeFlavor == "class")
-                            {
-                                fc.ClassScopeDepths.Push(fc.ScopeDepth);
-                                fc.CurrentNamespace += (fc.CurrentNamespace.Length > 0 ? "." : "") + name;
-                                fc.NamespaceScopeDepths.Push(fc.ScopeDepth);
-
-                                Verbose("Namespace [{0}], depth [1]", fc.CurrentNamespace, fc.ScopeDepth);
-                            }
-                        }
-
-                        fc.Line = reader.ReadLine();
-                    }
+                    tokens = Tokenizer.Tokenize(reader);
                 }
+
                 Verbose("Close: {0}", codefile);
             }
         }

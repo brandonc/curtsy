@@ -32,11 +32,11 @@ namespace Explain
             switch (Path.GetExtension(args[0]).ToLower())
             {
                 case ".cs":
-                    Explain(new string[] { args[0] }, @"C:\Documents and Settings\BSC\src\explain\src\Explain\bin\Debug\explain.exe");
+                    Explain(new string[] { args[0] }, @"C:\Users\brandon.MONDOROBOT\src\explain\src\Explain\bin\Debug\explain.exe");
                     break;
                 default:
                     // Assume MSBuild
-                    Explain(ProbeMSBuild(args[0]), @"C:\Documents and Settings\BSC\src\explain\src\Explain\bin\Debug\explain.exe");
+                    Explain(ProbeMSBuild(args[0]), @"C:\Users\brandon.MONDOROBOT\src\explain\src\Explain\bin\Debug\explain.exe");
                     break;
             }
 
@@ -77,14 +77,36 @@ namespace Explain
             }
         }
 
-        class FileContext
+        delegate void EmitLineEventHandler(string line, int sourceLineNumber);
+
+        class FileParser
         {
-            public StringBuilder Line = new StringBuilder(128);
-            public Queue<string> Namespace = new Queue<string>(3);
-            public StringBuilder Comment = new StringBuilder(256);
-            public int ScopeDepth;
-            public Stack<int> NamespaceScopes = new Stack<int>();
-            public bool InLiteral = false;
+            public event EmitLineEventHandler EmitLine;
+            public event EmitLineEventHandler EmitCommentLine;
+
+            private readonly Queue<string> tokens;
+            private readonly string path;
+
+            private int sourceLineNumber = 0;
+
+            public void Parse()
+            {
+                using (StreamReader reader = new StreamReader(path))
+                {
+                    string line = reader.ReadLine();
+                    sourceLineNumber++;
+                }
+            }
+
+            public FileParser(string path)
+            {
+                using (StreamReader reader = new StreamReader(path))
+                {
+                    this.tokens = Tokenizer.Tokenize(reader);
+                }
+
+                this.path = path;
+            }
         }
 
         class Tokenizer
@@ -94,9 +116,39 @@ namespace Explain
             public const char BLOCK_BEGIN = '{';
             public const char BLOCK_END = '}';
             public const char FORWARDSLASH = '/';
+            public const char BACKSLASH = '\\';
             public const char CR = '\r';
             public const char LF = '\n';
             public const char SPLAT = '*';
+            public const char AT = '@';
+            public const char GREATERTHAN = '>';
+            public const char LESSTHAN = '<';
+            public const char PAREN_BEGIN = '(';
+            public const char PAREN_END = ')';
+            public const char BRACKET_BEGIN = '[';
+            public const char BRACKET_END = ']';
+
+            public static readonly string EOL = System.Environment.NewLine;
+
+            private static void ChompUntil(char until, StreamReader reader, StringBuilder token)
+            {
+                bool isescaped = false;
+                char c = Char.MinValue;
+                do
+                {
+                    isescaped = c == BACKSLASH && !isescaped;
+                    c = (char)reader.Read();
+                    token.Append(c);
+                } while (reader.Peek() >= 0 && !(c == until && !isescaped));
+            }
+
+            private static void ChompUntil(string until, StreamReader reader, StringBuilder token)
+            {
+                do {
+                    char c = (char)reader.Read();
+                    token.Append(c);
+                } while(token.Length < until.Length || token.ToString().Substring(token.Length - until.Length, until.Length) != until);
+            }
 
             public static Queue<string> Tokenize(StreamReader reader)
             {
@@ -112,70 +164,75 @@ namespace Explain
                     }
                 });
 
-                bool inwhitespace = true;
                 while(reader.Peek() >= 0) {
                     char c = (char)reader.Read();
+                    
+                    if (c == LF)
+                    {
+                        pushtoken();
+                        token.Append(EOL);
+                        pushtoken();
+                        continue;
+                    }
+                    
+                    if (Char.IsWhiteSpace(c))
+                    {
+                        pushtoken();
+                        continue;
+                    }
 
-                    if (c == CR)
+                    if(c == STRING_LITERAL || c == AT) 
                     {
                         pushtoken();
                         token.Append(c);
-                        if ((char)reader.Peek() == LF)
+                        if(c == AT)
                             token.Append((char)reader.Read());
 
-                        inwhitespace = true;
-                        continue;
-                    }
-                    else if (c == LF)
-                    {
-                        pushtoken();
-                        token.Append(c);
-                        pushtoken();
-                        inwhitespace = true;
-                        continue;
-                    }
-                    else if (Char.IsWhiteSpace(c))
-                    {
-                        if (!inwhitespace)
-                            pushtoken();
-
-                        token.Append(c);
-                        inwhitespace = true;
-                        continue;
-                    }
-                    else
-                    {
-                        if (inwhitespace)
-                            pushtoken();
-
-                        inwhitespace = false;
-                    }
-
-                    if (c == FORWARDSLASH &&
-                        ((char)reader.Peek() == FORWARDSLASH || (char)reader.Peek() == SPLAT))
-                    {
-                        // Comment begin
-                        pushtoken();
-                        token.Append(c);
-                        token.Append((char)reader.Read());
+                        ChompUntil(STRING_LITERAL, reader, token);
                         pushtoken();
                         continue;
                     }
-
-                    if (c == SPLAT && (char)reader.Peek() == FORWARDSLASH)
+                    
+                    if(c == CHAR_LITERAL)
                     {
-                        // Comment end
                         pushtoken();
                         token.Append(c);
-                        token.Append((char)reader.Read());
+                        ChompUntil(CHAR_LITERAL, reader, token);
+                        pushtoken();
+                        continue;
+                    }
+                    
+                    if (c == FORWARDSLASH && (char)reader.Peek() == SPLAT)
+                    {
+                        // Multiline comment begin
+                        pushtoken();
+                        token.Append(c);
+                        ChompUntil("*/", reader, token);
+                        pushtoken();
+                        continue;
+                    }
+                    
+                    if(c == FORWARDSLASH && (char)reader.Peek() == FORWARDSLASH) {
+                        token.Append(c);
+                        ChompUntil(LF, reader, token);
+                        while(token[token.Length - 1] == CR || token[token.Length - 1] == LF)
+                        {
+                            token.Remove(token.Length - 1, 1);
+                        }
+                        pushtoken();
+                        token.Append(EOL);
                         pushtoken();
                         continue;
                     }
 
                     if (c == BLOCK_BEGIN ||
                         c == BLOCK_END ||
-                        c == CHAR_LITERAL ||
-                        c == STRING_LITERAL)
+                        c == GREATERTHAN ||
+                        c == LESSTHAN/* || 
+                        c == PAREN_BEGIN ||
+                        c == PAREN_END ||
+                        c == BRACKET_BEGIN ||
+                        c == BRACKET_END*/)
                     {
                         pushtoken();
                         token.Append(c);
@@ -198,92 +255,13 @@ namespace Explain
 
             foreach (string codefile in files)
             {
-                if (Path.GetFileNameWithoutExtension(codefile) != "StateMachine")
+                if (Path.GetFileNameWithoutExtension(codefile) != "StringRegexExtensions")
                     continue;
 
                 Verbose("Open: {0}", codefile);
 
-                Queue<string> tokens = null;
-                using (StreamReader reader = new StreamReader(codefile))
-                {
-                    tokens = Tokenizer.Tokenize(reader);
-                }
-
-                FileContext ctx = new FileContext();
-
-                while (tokens.Count > 0)
-                {
-                    string tok = tokens.Dequeue();
-                    switch (tok[0])
-                    {
-                        case Tokenizer.STRING_LITERAL:
-                        case Tokenizer.CHAR_LITERAL:
-                            ctx.InLiteral = !ctx.InLiteral && ctx.Comment.Length == 0;
-                            break;
-                        case Tokenizer.BLOCK_BEGIN:
-                            if (!ctx.InLiteral)
-                                ctx.ScopeDepth++;
-                            break;
-                        case Tokenizer.BLOCK_END:
-                            if (!ctx.InLiteral)
-                                ctx.ScopeDepth--;
-                            break;
-                        case Tokenizer.CR:
-                        case Tokenizer.LF:
-                            int afterline = 1;
-                            while (afterline != tok.Length && (tok[afterline] == Tokenizer.CR || tok[afterline] == Tokenizer.LF))
-                                afterline++;
-                            
-                            tok = afterline == tok.Length ? String.Empty : tok.Substring(afterline);
-                            // EOL
-                            WriteLine(ctx.Line.ToString());
-                            ctx.Line.Clear();
-
-                            if(tok.Length > 0)
-                                goto more;
-
-                            continue;
-                        default:
-                            goto more;
-                    }
-                    ctx.Line.Append(tok);
-                    continue;
-                more:
-                    if (ctx.Comment.Length == 0)
-                        ctx.Line.Append(tok);
-                    else
-                        ctx.Comment.Append(tok);
-
-                    if (tok == "//")
-                    {
-                        ctx.Comment.Append(tokens.Dequeue());
-                        continue;
-                    }
-
-                    if (ctx.InLiteral || ctx.Comment.Length > 0)
-                        continue;
-
-                    switch (tok)
-                    {
-                        case "namespace":
-                        case "class":
-                            // Push scope
-                            ctx.Line.Append(tokens.Dequeue());
-                            ctx.Namespace.Enqueue(tokens.Peek());
-
-                            Verbose("Scope: {0}, level {1}", tokens.Peek(), ctx.ScopeDepth);
-                            // Probe type
-                            break;
-                        case "enum":
-                        case "struct":
-                        case "interface":
-                            // Probe type
-                            ctx.Line.Append(tokens.Dequeue());
-                            Verbose("Type: {0}", tokens.Peek());
-                            break;
-                    }
-                }
-
+                FileParser parser = new FileParser(codefile);
+                
                 Verbose("Close: {0}", codefile);
             }
         }

@@ -10,9 +10,19 @@ using System.IO;
 using System.Xml;
 using System.Reflection;
 using System.Security.Policy;
+using StateMachine;
+using System.Web.Razor;
+using System.CodeDom.Compiler;
+using System.Net;
 
 namespace Explain
 {
+    public class Section
+    {
+        public string CodeHtml;
+        public string DocsHtml;
+    }
+
     class Program
     {
         static int Main(string[] args)
@@ -27,6 +37,19 @@ namespace Explain
             {
                 Console.WriteLine("explain: file not found");
                 return -2;
+            }
+
+            string currentDir = System.Environment.CurrentDirectory;
+            Directory.CreateDirectory("docs");
+
+            string[] resources = { "prettyify.js", "explain.css" };
+            foreach(string res in resources) {
+                using(var writer = File.CreateText("docs/" + res)) {
+                    using (var reader = new StreamReader(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Explain.Resources.prettify.js")))
+                    {
+                        writer.Write(reader.ReadToEnd());
+                    }
+                }
             }
 
             switch (Path.GetExtension(args[0]).ToLower())
@@ -93,9 +116,39 @@ namespace Explain
             {
                 using (StreamReader reader = new StreamReader(path))
                 {
-                    string line = reader.ReadLine();
-                    sourceLineNumber++;
+                    bool iscomment = false;
+                    while (tokens.Count > 0)
+                    {
+                        string tok = tokens.Dequeue();
+                        if (tok == System.Environment.NewLine)
+                        {
+                            sourceLineNumber++;
+                            OnEmitLine(reader.ReadLine(), iscomment);
+                            iscomment = false;
+                            continue;
+                        }
+
+                        if (tok.StartsWith("//") || tok.StartsWith("/*"))
+                        {
+                            iscomment = true;
+                            continue;
+                        }
+
+                        switch (tok)
+                        {
+                            case "class":
+                                break;
+                        }
+                    }
                 }
+            }
+
+            protected void OnEmitLine(string line, bool iscomment)
+            {
+                if (!iscomment && EmitLine != null)
+                    EmitLine(line, this.sourceLineNumber);
+                else if (iscomment && EmitCommentLine != null)
+                    EmitCommentLine(line, this.sourceLineNumber);
             }
 
             public FileParser(string path)
@@ -253,17 +306,72 @@ namespace Explain
 
             Verbose("Assembly loaded? ", (ass != null));
 
+            Type templateType = SetupRazorTemplate();
+
             foreach (string codefile in files)
             {
                 if (Path.GetFileNameWithoutExtension(codefile) != "StringRegexExtensions")
                     continue;
 
-                Verbose("Open: {0}", codefile);
+                List<Section> sections = new List<Section>();
+                var hasCode = false;
+                var docsText = new StringBuilder();
+                var codeText = new StringBuilder();
+
+                Action<string, string> save = (string docs, string code) => sections.Add(new Section() { DocsHtml = docs, CodeHtml = code });
 
                 FileParser parser = new FileParser(codefile);
-                
-                Verbose("Close: {0}", codefile);
+                parser.EmitCommentLine += delegate(string line, int sourceLineNumber)
+                {
+                    if (hasCode)
+                    {
+                        save(docsText.ToString(), codeText.ToString());
+                        docsText.Clear();
+                        codeText.Clear();
+                    }
+
+                    docsText.Append(line);
+                };
+
+                parser.EmitLine += delegate(string line, int sourceLineNumber)
+                {
+                    codeText.Append(line);
+                    hasCode = true;
+                };
+
+                parser.Parse();
+                save(docsText.ToString(), codeText.ToString());
+
+                int depth;
+                var destination = GetDestination(codefile, out depth);
+                string pathToRoot = "";
+                for (var i = 0; i < depth; i++)
+                    pathToRoot = Path.Combine("..", pathToRoot);
+
+                var htmlTemplate = Activator.CreateInstance(templateType) as TemplateBase;
+                htmlTemplate.Title = Path.GetFileName(codefile);
+                htmlTemplate.PathToCss = Path.Combine(pathToRoot, "explain.css").Replace('\\', '/');
+                htmlTemplate.GetSourcePath = (string s) => Path.Combine(pathToRoot, Path.ChangeExtension(s.ToLower(), ".html").Substring(2)).Replace('\\', '/');
+                htmlTemplate.Sections = sections;
+                htmlTemplate.Sources = new List<string>(files);
+
+                htmlTemplate.Execute();
+
+                File.WriteAllText(destination, htmlTemplate.Buffer.ToString());
             }
+        }
+
+        // Compute the destination HTML path for an input source file path. If the source
+        // is `Example.cs`, the HTML will be at `docs/example.html`
+        static string GetDestination(string filepath, out int depth)
+        {
+            var dirs = Path.GetDirectoryName(filepath).Substring(1).Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+            depth = dirs.Length;
+
+            var dest = Path.Combine("docs", string.Join(Path.DirectorySeparatorChar.ToString(), dirs)).ToLower();
+            Directory.CreateDirectory(dest);
+
+            return Path.Combine(dest, Path.ChangeExtension(filepath, "html").ToLower());
         }
 
         static void WriteLine(string line)
@@ -282,6 +390,43 @@ namespace Explain
         {
             Console.WriteLine("Usage: explain <file>");
             Console.WriteLine("<file> can be a .cs, .vb, .csproj, or .sln");
+        }
+
+        static Type SetupRazorTemplate()
+        {
+            RazorEngineHost host = new RazorEngineHost(new CSharpRazorCodeLanguage());
+            host.DefaultBaseClass = typeof(TemplateBase).FullName;
+            host.DefaultNamespace = "RazorOutput";
+            host.DefaultClassName = "Template";
+            host.NamespaceImports.Add("System");
+
+            GeneratorResults razorResult = null;
+
+            using (var reader = new StreamReader(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Explain.Resources.explain.cshtml")))
+            {
+                razorResult = new RazorTemplateEngine(host).GenerateCode(reader);
+            }
+
+            var compilerParams = new CompilerParameters
+            {
+                GenerateInMemory = true,
+                GenerateExecutable = false,
+                IncludeDebugInformation = false,
+                CompilerOptions = "/target:library /optimize"
+            };
+            compilerParams.ReferencedAssemblies.Add(typeof(Program).Assembly.CodeBase.Replace("file:///", "").Replace("/", "\\"));
+
+            var codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
+            CompilerResults results = codeProvider.CompileAssemblyFromDom(compilerParams, razorResult.GeneratedCode);
+
+            // Check for errors that may have occurred during template generation
+            if (results.Errors.HasErrors)
+            {
+                foreach (var err in results.Errors.OfType<CompilerError>().Where(ce => !ce.IsWarning))
+                    Console.WriteLine("Error Compiling Template: ({0}, {1}) {2}", err.Line, err.Column, err.ErrorText);
+            }
+
+            return results.CompiledAssembly.GetType("RazorOutput.Template");
         }
     }
 }

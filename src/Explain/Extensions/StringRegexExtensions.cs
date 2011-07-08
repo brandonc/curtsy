@@ -165,9 +165,17 @@ namespace System
 
         void AddMatch(Regex regex, Match match)
         {
+            if (!match.Success)
+                return;
+
             for (int index = 0; index < match.Groups.Count; index++)
             {
                 Group group = match.Groups[index];
+                if (group.Captures.Count == 0)
+                {
+                    continue;
+                }
+
                 string name = regex.GroupNameFromNumber(index);
                 int tryint;
 

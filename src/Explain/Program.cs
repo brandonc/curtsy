@@ -32,11 +32,11 @@ namespace Explain
             switch (Path.GetExtension(args[0]).ToLower())
             {
                 case ".cs":
-                    Explain(new string[] { args[0] }, @"C:\Users\Brandon.MONDOROBOT\src\explain\src\Explain\bin\Debug\explain.exe");
+                    Explain(new string[] { args[0] }, @"C:\Documents and Settings\BSC\src\explain\src\Explain\bin\Debug\explain.exe");
                     break;
                 default:
                     // Assume MSBuild
-                    Explain(ProbeMSBuild(args[0]), @"C:\Users\Brandon.MONDOROBOT\src\explain\src\Explain\bin\Debug\explain.exe");
+                    Explain(ProbeMSBuild(args[0]), @"C:\Documents and Settings\BSC\src\explain\src\Explain\bin\Debug\explain.exe");
                     break;
             }
 
@@ -96,11 +96,15 @@ namespace Explain
             public const char STRING_LITERAL = '\"';
             public const char BLOCK_BEGIN = '{';
             public const char BLOCK_END = '}';
+            public const char FORWARDSLASH = '/';
+            public const char CR = '\r';
+            public const char LF = '\n';
+            public const char SPLAT = '*';
 
             public static Queue<string> Tokenize(StreamReader reader)
             {
                 var token = new StringBuilder();
-                var result = new Queue<string>(64);
+                var result = new Queue<string>(512);
 
                 Action pushtoken = new Action(() =>
                 {
@@ -111,13 +115,54 @@ namespace Explain
                     }
                 });
 
+                bool inwhitespace = true;
                 while(reader.Peek() >= 0) {
                     char c = (char)reader.Read();
 
-                    if (Char.IsWhiteSpace(c))
+                    if (c == CR || c == LF)
                     {
                         pushtoken();
+                        token.Append(c);
+                        if ((char)reader.Peek() == LF)
+                            token.Append((char)reader.Read());
+
+                        inwhitespace = true;
                         continue;
+                    }
+                    else if (Char.IsWhiteSpace(c))
+                    {
+                        if (!inwhitespace)
+                            pushtoken();
+
+                        token.Append(c);
+                        inwhitespace = true;
+                        continue;
+                    }
+                    else
+                    {
+                        if (inwhitespace)
+                            pushtoken();
+
+                        inwhitespace = false;
+                    }
+
+                    if (c == FORWARDSLASH &&
+                        ((char)reader.Peek() == FORWARDSLASH || (char)reader.Peek() == SPLAT))
+                    {
+                        // Comment begin
+                        pushtoken();
+                        token.Append(c);
+                        token.Append((char)reader.Read());
+                        pushtoken();
+                    }
+
+                    if (c == SPLAT && (char)reader.Peek() == FORWARDSLASH)
+                    {
+                        // Comment end
+                        pushtoken();
+                        token.Append(c);
+                        token.Append((char)reader.Read());
+                        pushtoken();
                     }
 
                     if (c == BLOCK_BEGIN ||

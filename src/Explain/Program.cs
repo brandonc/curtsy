@@ -79,15 +79,12 @@ namespace Explain
 
         class FileContext
         {
-            public string Line;
+            public StringBuilder Line = new StringBuilder(128);
+            public Queue<string> Namespace = new Queue<string>(3);
+            public StringBuilder Comment = new StringBuilder(256);
             public int ScopeDepth;
-            public List<string> Namespace;
-            public string MultilineComment;
-
-            public bool EOF
-            {
-                get { return this.Line == null; }
-            }
+            public Stack<int> NamespaceScopes = new Stack<int>();
+            public bool InLiteral = false;
         }
 
         class Tokenizer
@@ -152,8 +149,11 @@ namespace Explain
                         // Comment begin
                         pushtoken();
                         token.Append(c);
-                        token.Append((char)reader.Read());
+                        while((char)reader.Peek() == FORWARDSLASH)
+                            token.Append((char)reader.Read());
+
                         pushtoken();
+                        continue;
                     }
 
                     if (c == SPLAT && (char)reader.Peek() == FORWARDSLASH)
@@ -163,6 +163,7 @@ namespace Explain
                         token.Append(c);
                         token.Append((char)reader.Read());
                         pushtoken();
+                        continue;
                     }
 
                     if (c == BLOCK_BEGIN ||
@@ -191,7 +192,7 @@ namespace Explain
 
             foreach (string codefile in files)
             {
-                if (Path.GetFileNameWithoutExtension(codefile) == "StringRegexExtensions")
+                if (Path.GetFileNameWithoutExtension(codefile) != "StateMachine")
                     continue;
 
                 Verbose("Open: {0}", codefile);
@@ -202,8 +203,59 @@ namespace Explain
                     tokens = Tokenizer.Tokenize(reader);
                 }
 
+                FileContext ctx = new FileContext();
+
+                while (tokens.Count > 0)
+                {
+                    string tok = tokens.Dequeue();
+                    switch (tok[0])
+                    {
+                        case Tokenizer.STRING_LITERAL:
+                        case Tokenizer.CHAR_LITERAL:
+                            ctx.InLiteral = !ctx.InLiteral && ctx.Comment.Length == 0;
+                            break;
+                        case Tokenizer.BLOCK_BEGIN:
+                            if (!ctx.InLiteral)
+                                ctx.ScopeDepth++;
+                            break;
+                        case Tokenizer.BLOCK_END:
+                            if (!ctx.InLiteral)
+                                ctx.ScopeDepth--;
+                            break;
+                        case Tokenizer.CR:
+                        case Tokenizer.LF:
+                            int afterline = 0;
+                            while (afterline != tok.Length && (tok[afterline] == Tokenizer.CR || tok[afterline] == Tokenizer.LF))
+                            {
+                                afterline++;
+                            }
+                            
+                            tok = afterline == tok.Length ? "" : tok.Substring(afterline);
+                            // EOL
+                            WriteLine(ctx.Line.ToString());
+                            ctx.Line.Clear();
+
+                            if(tok.Length > 0)
+                                goto more;
+
+                            continue;
+                        default:
+                            goto more;
+                    }
+                    ctx.Line.Append(tok);
+                    continue;
+                more:
+                    
+                    ctx.Line.Append(tok);
+                }
+
                 Verbose("Close: {0}", codefile);
             }
+        }
+
+        static void WriteLine(string line)
+        {
+            Console.WriteLine(line);
         }
 
         static void Verbose(string str, params object[] p)

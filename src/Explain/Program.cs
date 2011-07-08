@@ -116,13 +116,21 @@ namespace Explain
                 while(reader.Peek() >= 0) {
                     char c = (char)reader.Read();
 
-                    if (c == CR || c == LF)
+                    if (c == CR)
                     {
                         pushtoken();
                         token.Append(c);
                         if ((char)reader.Peek() == LF)
                             token.Append((char)reader.Read());
 
+                        inwhitespace = true;
+                        continue;
+                    }
+                    else if (c == LF)
+                    {
+                        pushtoken();
+                        token.Append(c);
+                        pushtoken();
                         inwhitespace = true;
                         continue;
                     }
@@ -149,9 +157,7 @@ namespace Explain
                         // Comment begin
                         pushtoken();
                         token.Append(c);
-                        while((char)reader.Peek() == FORWARDSLASH)
-                            token.Append((char)reader.Read());
-
+                        token.Append((char)reader.Read());
                         pushtoken();
                         continue;
                     }
@@ -224,13 +230,11 @@ namespace Explain
                             break;
                         case Tokenizer.CR:
                         case Tokenizer.LF:
-                            int afterline = 0;
+                            int afterline = 1;
                             while (afterline != tok.Length && (tok[afterline] == Tokenizer.CR || tok[afterline] == Tokenizer.LF))
-                            {
                                 afterline++;
-                            }
                             
-                            tok = afterline == tok.Length ? "" : tok.Substring(afterline);
+                            tok = afterline == tok.Length ? String.Empty : tok.Substring(afterline);
                             // EOL
                             WriteLine(ctx.Line.ToString());
                             ctx.Line.Clear();
@@ -245,8 +249,39 @@ namespace Explain
                     ctx.Line.Append(tok);
                     continue;
                 more:
-                    
-                    ctx.Line.Append(tok);
+                    if (ctx.Comment.Length == 0)
+                        ctx.Line.Append(tok);
+                    else
+                        ctx.Comment.Append(tok);
+
+                    if (tok == "//")
+                    {
+                        ctx.Comment.Append(tokens.Dequeue());
+                        continue;
+                    }
+
+                    if (ctx.InLiteral || ctx.Comment.Length > 0)
+                        continue;
+
+                    switch (tok)
+                    {
+                        case "namespace":
+                        case "class":
+                            // Push scope
+                            ctx.Line.Append(tokens.Dequeue());
+                            ctx.Namespace.Enqueue(tokens.Peek());
+
+                            Verbose("Scope: {0}, level {1}", tokens.Peek(), ctx.ScopeDepth);
+                            // Probe type
+                            break;
+                        case "enum":
+                        case "struct":
+                        case "interface":
+                            // Probe type
+                            ctx.Line.Append(tokens.Dequeue());
+                            Verbose("Type: {0}", tokens.Peek());
+                            break;
+                    }
                 }
 
                 Verbose("Close: {0}", codefile);
@@ -255,7 +290,7 @@ namespace Explain
 
         static void WriteLine(string line)
         {
-            Console.WriteLine(line);
+            // NOP
         }
 
         static void Verbose(string str, params object[] p)

@@ -72,7 +72,9 @@ namespace Explain
             // Create "docs" folder and populate with requisite css and js file
             PrepareOutput();
 
-            _pathHelper = new PathHelper(Path.GetDirectoryName(args[0]) + Path.DirectorySeparatorChar);
+            FileInfo fi = new FileInfo(args[0]);
+
+            _pathHelper = new PathHelper(fi.DirectoryName + Path.DirectorySeparatorChar);
 
             IEnumerable<string> sources;
 
@@ -405,6 +407,7 @@ namespace Explain
                         return tok;
                     });
 
+                    // Helper: emit a multiline token
                     Action<string> emitMultilineToken = new Action<string>((string token) =>
                     {
                         using (StringReader sr = new StringReader(token))
@@ -413,8 +416,11 @@ namespace Explain
                             {
                                 sourceLineNumber++;
                                 OnEmitLine(reader.ReadLine(), iscomment);
-                                sr.ReadLine(); // Throw away
+                                // Throw away
+                                sr.ReadLine();
                             }
+#warning This is a logical error!
+                            tokens.Dequeue();
                         }
                     });
 
@@ -479,7 +485,6 @@ namespace Explain
                         {
                             iscomment = true;
                             emitMultilineToken(tok);
-                            iscomment = false;
                             continue;
                         }
                         else

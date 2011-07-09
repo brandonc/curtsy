@@ -1,7 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Explain", "Explain/Explain.csproj", "{A98E2581-91F9-4F51-BB3F-66F948E7ACF6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Explain", "Explain\Explain.csproj", "{A98E2581-91F9-4F51-BB3F-66F948E7ACF6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{10DF5DDF-E099-4E12-88EC-1758361D13D8}"
+	ProjectSection(SolutionItems) = preProject
+		..\LICENSE = ..\LICENSE
+		..\README.md = ..\README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

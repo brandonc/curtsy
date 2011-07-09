@@ -121,6 +121,11 @@ table td {
     background: #f5f5ff;
     border-left: 1px solid #e5e5ee;
   }
+  td.code a, th.code a 
+  {
+      text-decoration: none;
+      border-bottom: 1px dashed #606;
+  }
     pre, tt, code {
       font-size: 12px; line-height: 18px;
       font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;

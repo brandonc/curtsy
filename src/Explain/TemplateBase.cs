@@ -8,7 +8,7 @@ namespace Explain
 
         // Properties available from within the template
         public string Title { get; set; }
-        public string PathToCss { get; set; }
+        public Func<string, string> GetResourcePath { get; set; }
         public Func<string, string> GetSourcePath { get; set; }
         public List<Section> Sections { get; set; }
         public List<string> Sources { get; set; }

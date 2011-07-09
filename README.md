@@ -2,6 +2,8 @@
 
 > A hyperlinked, readable, c#-to-annotated-html documentation generator.
 
+[See example output][pages]
+
 Explain is a fork of [nocco][]* that does some lexical analysis in order to provide type hyperlinking for c#.
 
 Nocco is simpler and yet can be run against more programming languages, comparatively speaking. It just doesn't hyperlink the source.
@@ -21,3 +23,4 @@ This is a very early work in progress. Intellisense comments are ignored complet
 
 [docco]: http://jashkenas.github.com/docco/
 [nocco]: http://dontangg.github.com/nocco/
+[pages]: http://brandoncroft.com/explain/

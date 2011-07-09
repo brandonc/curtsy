@@ -1,0 +1,1030 @@
+<!DOCTYPE html />
+<html>
+<head>
+	<title>Program.cs</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<link href="explain.css" rel="stylesheet" media="all" type="text/css" />
+	<script src="prettify.js" type="text/javascript"></script>
+</head>
+<body onload="prettyPrint()">
+	<div id="container">
+		<div id="background"></div>
+			<div id="jump_to">
+				Jump To &hellip;
+				<div id="jump_wrapper">
+					<div id="jump_page">
+							<a class="source" href="Extensions/StringRegexExtensions.html">
+								Extensions\StringRegexExtensions.cs
+							</a>
+							<a class="source" href="PathHelper.html">
+								PathHelper.cs
+							</a>
+							<a class="source" href="Program.html">
+								Program.cs
+							</a>
+							<a class="source" href="Properties/AssemblyInfo.html">
+								Properties\AssemblyInfo.cs
+							</a>
+							<a class="source" href="TemplateBase.html">
+								TemplateBase.cs
+							</a>
+							<a class="source" href="TypeMap.html">
+								TypeMap.cs
+							</a>
+					</div>
+				</div>
+			</div>
+		<table cellpadding="0" cellspacing="0">
+			<thead>
+				<tr>
+					<th class="docs">
+						<h1>Program.cs</h1>
+					</th>
+					<th class="code"></th>
+				</tr>
+			</thead>
+			<tbody>
+					<tr id="section_1">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_1">&#182;</a>
+							</div>
+							<h2>Explain</h2>
+<blockquote>
+<p>A hyperlinked, readable, c#-to-annotated-html documentation generator.</p>
+</blockquote>
+<p>Explain is a fork of <a href="http://dontangg.github.com/nocco/">nocco</a>* that does some lexical analysis in order to provide type hyperlinking for c#.</p>
+
+<p>Nocco is simpler and yet can be run against more programming languages, comparatively speaking. It just doesn't hyperlink the source.</p>
+
+<p>This page is the result of running Explain against its own source file. The source for Explain is <a href="https://github.com/brandonc/explain">available on GitHub</a>, and released under the MIT license.</p>
+
+<p>You can run explain either against a <code>.csproj</code> file or against individual source files.</p>
+
+<p>Running this: <code>explain WindowsApplication1.csproj</code></p>
+
+<p>will generate linked HTML documentation for the named source files, saving it into a new folder called &quot;docs&quot;.</p>
+
+<p><small>* nocco is a port of <a href="http://jashkenas.github.com/docco/">docco</a>!</small></p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+#if DEBUG
+#define VERBOSE
+#endif
+
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Web.Razor;
+using System.Xml;
+using System.Collections;
+
+namespace Explain
+{
+    public class Section
+    {
+        public string CodeHtml;
+        public string DocsHtml;
+        public int StartLine;
+        public int EndLine;
+    }
+
+    class Program
+    {
+        static <a href="PathHelper.html">PathHelper</a> _pathHelper;
+        static string[] _resources = { &quot;prettify.js&quot;, &quot;explain.css&quot; };
+        static <a href="TypeMap.html">TypeMap</a> _typeMap = new <a href="TypeMap.html">TypeMap</a>();
+
+        static int Main(string[] args)
+        {
+            // Explain only expects one argument: the target file. That can be either a .cs file or msbuild .csproj file.
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_2">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_2">&#182;</a>
+							</div>
+							<p>if (args.Length != 1)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>            {
+                PrintUsage();
+                return -1;
+            }
+
+            if (!File.Exists(args[0]))
+            {
+                Console.WriteLine(&quot;explain: file not found&quot;);
+                return -2;
+            }
+
+            // Create &quot;docs&quot; folder and populate with requisite css and js file
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_3">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_3">&#182;</a>
+							</div>
+							<p>PrepareOutput();</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+            _pathHelper = new <a href="PathHelper.html">PathHelper</a>(Path.GetDirectoryName(args[0]) + Path.DirectorySeparatorChar);
+
+            IEnumerable&lt;string&gt; sources;
+
+            switch (Path.GetExtension(args[0]).ToLower())
+            {
+                case &quot;.cs&quot;:
+                    sources = new string[] { args[0] };
+                    break;
+                default:
+                    // Assume MSBuild
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_4">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_4">&#182;</a>
+							</div>
+							<p>sources = ProbeMSBuild(args[0]).ToArray();</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    break;
+            }
+
+            Explain(sources);
+
+            return 0;
+        }
+
+        class OutputUnit
+        {
+            public string CodeFile;
+            public List&lt;Section&gt; Sections;
+        }
+
+        static void Explain(IEnumerable&lt;string&gt; sources)
+        {
+            Type templateType = SetupRazorTemplate();
+
+            List&lt;OutputUnit&gt; output = new List&lt;OutputUnit&gt;();
+
+            foreach (string codefile in sources)
+            {
+                List&lt;Section&gt; sections = new List&lt;Section&gt;();
+                var hasCode = false;
+                var docsText = new StringBuilder();
+                var codeText = new StringBuilder();
+
+                Action&lt;string, string&gt; save = (string docs, string code) =&gt; sections.Add(new Section() { DocsHtml = docs, CodeHtml = code });
+
+                FileParser parser = new FileParser(codefile);
+                parser.EmitCommentLine += delegate(string line, int sourceLineNumber)
+                {
+                    // Throw away intellisense documentation. It doesn&#39;t markdown well at all.
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_5">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_5">&#182;</a>
+							</div>
+							<p>if (line.TrimStart(' ', '\t').StartsWith(&quot;///&quot;))</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                        return;
+
+                    if (hasCode)
+                    {
+                        save(docsText.ToString(), codeText.ToString());
+                        docsText.Clear();
+                        codeText.Clear();
+                        hasCode = false;
+                    }
+
+                    docsText.AppendLine(line.TrimStart(&#39; &#39;, &#39;\t&#39;, &#39;/&#39;, &#39;*&#39;));
+                };
+
+                parser.EmitLine += delegate(string line, int sourceLineNumber)
+                {
+                    codeText.AppendLine(line);
+                    hasCode = true;
+                };
+
+                parser.Parse();
+                save(docsText.ToString(), codeText.ToString());
+
+                output.Add(new OutputUnit()
+                {
+                    Sections = sections,
+                    CodeFile = codefile
+                });
+            }
+
+            foreach (var v in output)
+            {
+                Generate(v.Sections, sources.ToArray(), v.CodeFile, templateType);
+            }
+        }
+
+        // Create docs folder and copy resource files from the list of embedded resources
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_6">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_6">&#182;</a>
+							</div>
+							<p>static void PrepareOutput()</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        {
+            Directory.CreateDirectory(&quot;docs&quot;);
+
+            foreach (string res in _resources)
+            {
+                if (File.Exists(&quot;docs&quot; + Path.DirectorySeparatorChar + res))
+                {
+                    Verbose(&quot;Skipping {0}&quot;, res);
+                    continue;
+                }
+
+                Verbose(&quot;Copying {0}...&quot;, res);
+
+                try
+                {
+                    using (var writer = File.CreateText(&quot;docs&quot; + Path.DirectorySeparatorChar + res))
+                    {
+                        string[] names = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceNames();
+                        Stream s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(&quot;Explain.Resources.&quot; + res);
+
+                        using (var reader = new StreamReader(s))
+                        {
+                            writer.Write(reader.ReadToEnd());
+                        }
+                    }
+                }
+                catch
+                {
+                    File.Delete(&quot;docs&quot; + Path.DirectorySeparatorChar + res);
+                }
+            }
+        }
+
+        // Open specified MSBuild file and return relative .cs file paths for each `&lt;Compile&gt;` element
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_7">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_7">&#182;</a>
+							</div>
+							<p>static IEnumerable<string> ProbeMSBuild(string projfile)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        {
+            XmlDocument doc = new XmlDocument();
+            try
+            {
+                doc.Load(projfile);
+            }
+            catch (XmlException)
+            {
+                Console.WriteLine(&quot;explain: {0} is not an msbuild file.&quot;, Path.GetFileName(projfile));
+                Environment.Exit(-3);
+            }
+
+            
+            var nsmgr = new XmlNamespaceManager(doc.NameTable);
+            string ns = &quot;&quot;;
+
+            if (doc.DocumentElement.Attributes[&quot;xmlns&quot;] != null)
+            {
+                ns = &quot;msbuild:&quot;;
+                string xmlns = doc.DocumentElement.Attributes[&quot;xmlns&quot;].Value;
+                nsmgr.AddNamespace(&quot;msbuild&quot;, xmlns);
+            }
+
+            foreach (XmlNode node in doc.SelectNodes(String.Format(&quot;//{0}Compile[@Include]&quot;, ns), nsmgr))
+            {
+                if (!node.Attributes[&quot;Include&quot;].Value.EndsWith(&quot;.cs&quot;))
+                    continue;
+
+                yield return Path.Combine(Path.GetDirectoryName(projfile), node.Attributes[&quot;Include&quot;].Value);
+            }
+        }
+
+        // The tokenizer produces a `Queue&lt;string&gt;` of tokens for a specified file stream.
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_8">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_8">&#182;</a>
+							</div>
+							<p>String literals and comments are aggregated into single tokens.
+class Lexer</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        {
+            public const char CHAR_LITERAL = &#39;\&#39;&#39;;
+            public const char STRING_LITERAL = &#39;\&quot;&#39;;
+            public const char BLOCK_BEGIN = &#39;{&#39;;
+            public const char BLOCK_END = &#39;}&#39;;
+            public const char FORWARDSLASH = &#39;/&#39;;
+            public const char BACKSLASH = &#39;\\&#39;;
+            public const char CR = &#39;\r&#39;;
+            public const char LF = &#39;\n&#39;;
+            public const char SPLAT = &#39;*&#39;;
+            public const char AT = &#39;@&#39;;
+            public const char GREATERTHAN = &#39;&gt;&#39;;
+            public const char LESSTHAN = &#39;&lt;&#39;;
+            public const char PAREN_BEGIN = &#39;(&#39;;
+            public const char PAREN_END = &#39;)&#39;;
+            public const char BRACKET_BEGIN = &#39;[&#39;;
+            public const char BRACKET_END = &#39;]&#39;;
+
+            public static readonly string EOL = System.Environment.NewLine;
+
+            // Continue adding characters to the specified token until an unescaped character is encountered
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_9">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_9">&#182;</a>
+							</div>
+							<p>private static void ChompUntil(char until, StreamReader reader, StringBuilder token)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>            {
+                bool isescaped = false;
+                char c = Char.MinValue;
+                do
+                {
+                    isescaped = c == BACKSLASH &amp;&amp; !isescaped;
+                    c = (char)reader.Read();
+                    token.Append(c);
+                } while (reader.Peek() &gt;= 0 &amp;&amp; !(c == until &amp;&amp; !isescaped));
+            }
+
+            // Continue adding characters to the specified token until string is encountered (inclusive of string)
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_10">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_10">&#182;</a>
+							</div>
+							<p>private static void ChompUntil(string until, StreamReader reader, StringBuilder token)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>            {
+                do
+                {
+                    char c = (char)reader.Read();
+                    token.Append(c);
+                } while (token.Length &lt; until.Length || token.ToString().Substring(token.Length - until.Length, until.Length) != until);
+            }
+
+            public static Queue&lt;string&gt; Tokenize(StreamReader reader)
+            {
+                var token = new StringBuilder();
+                var result = new Queue&lt;string&gt;(512);
+
+                Action pushtoken = new Action(() =&gt;
+                {
+                    if (token.Length &gt; 0)
+                    {
+                        result.Enqueue(token.ToString());
+                        token.Clear();
+                    }
+                });
+
+                while (reader.Peek() &gt;= 0)
+                {
+                    char c = (char)reader.Read();
+
+                    if (c == LF)
+                    {
+                        pushtoken();
+                        token.Append(EOL);
+                        pushtoken();
+                        continue;
+                    }
+
+                    // Non-newline white space is the primary signal for the end of a token.
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_11">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_11">&#182;</a>
+							</div>
+							<p>if (Char.IsWhiteSpace(c))</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    {
+                        pushtoken();
+                        continue;
+                    }
+
+                    // `&quot;` or `@` signals the start of a string literal
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_12">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_12">&#182;</a>
+							</div>
+							<p>if (c == STRING_LITERAL || c == AT)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    {
+                        pushtoken();
+                        token.Append(c);
+                        if (c == AT)
+                            token.Append((char)reader.Read());
+
+                        ChompUntil(STRING_LITERAL, reader, token);
+                        pushtoken();
+                        continue;
+                    }
+
+                    // `&#39;` signals the start of a character literal
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_13">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_13">&#182;</a>
+							</div>
+							<p>if (c == CHAR_LITERAL)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    {
+                        pushtoken();
+                        token.Append(c);
+                        ChompUntil(CHAR_LITERAL, reader, token);
+                        pushtoken();
+                        continue;
+                    }
+
+                    // `/*` signals the start of a multiline comment
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_14">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_14">&#182;</a>
+							</div>
+							<p>if (c == FORWARDSLASH &amp;&amp; (char)reader.Peek() == SPLAT)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    {
+                        pushtoken();
+                        token.Append(c);
+                        ChompUntil(&quot;*/&quot;, reader, token);
+                        pushtoken();
+                        continue;
+                    }
+
+                    // `//` signals the start of a line comment
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_15">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_15">&#182;</a>
+							</div>
+							<p>if (c == FORWARDSLASH &amp;&amp; (char)reader.Peek() == FORWARDSLASH)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    {
+                        token.Append(c);
+                        ChompUntil(LF, reader, token);
+                        while (token[token.Length - 1] == CR || token[token.Length - 1] == LF)
+                        {
+                            token.Remove(token.Length - 1, 1);
+                        }
+                        pushtoken();
+                        token.Append(EOL);
+                        pushtoken();
+                        continue;
+                    }
+
+                    // These characters are necessary to successfully parse type names later on.
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_16">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_16">&#182;</a>
+							</div>
+							<p>if (c == BLOCK_BEGIN ||</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                        c == BLOCK_END ||
+                        c == GREATERTHAN ||
+                        c == LESSTHAN ||
+                        c == PAREN_BEGIN ||
+                        c == PAREN_END ||
+                        c == BRACKET_BEGIN ||
+                        c == BRACKET_END)
+                    {
+                        pushtoken();
+                        token.Append(c);
+                        pushtoken();
+                        continue;
+                    }
+
+                    // Making a word
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_17">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_17">&#182;</a>
+							</div>
+							<p>token.Append(c);</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                }
+
+                return result;
+            }
+        }
+
+        delegate void EmitLineEventHandler(string line, int sourceLineNumber);
+
+        // The file parser reads both the source file AND token stream to deliver
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_18">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_18">&#182;</a>
+							</div>
+							<p>both comment and source lines via events.
+class FileParser</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        {
+            public event EmitLineEventHandler EmitLine;
+            public event EmitLineEventHandler EmitCommentLine;
+
+            private readonly Queue&lt;string&gt; tokens;
+            private readonly string path;
+
+            private int sourceLineNumber = 0;
+
+            public void Parse()
+            {
+                using (StreamReader reader = new StreamReader(path))
+                {
+                    bool iscomment = false;
+
+                    // Helper: get the next token and raise event if it&#39;s a newline.
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_19">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_19">&#182;</a>
+							</div>
+							<p>Func<string> next = new Func<string>(() =&gt;</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    {
+                        string tok = tokens.Dequeue();
+                        if (tok == System.Environment.NewLine)
+                        {
+                            sourceLineNumber++;
+                            OnEmitLine(reader.ReadLine(), iscomment);
+                        }
+                        return tok;
+                    });
+
+                    Action&lt;string&gt; emitMultilineToken = new Action&lt;string&gt;((string token) =&gt;
+                    {
+                        using (StringReader sr = new StringReader(token))
+                        {
+                            while (sr.Peek() &gt;= 0)
+                            {
+                                sourceLineNumber++;
+                                OnEmitLine(reader.ReadLine(), iscomment);
+                                sr.ReadLine(); // Throw away
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_20">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_20">&#182;</a>
+							</div>
+							<p>}</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                        }
+                    });
+
+                    // Helper: move to last newline
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_21">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_21">&#182;</a>
+							</div>
+							<p>Action skipNewlines = new Action(() =&gt;</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    {
+                        while (tokens.Peek() == System.Environment.NewLine)
+                        {
+                            next();
+                        }
+                    });
+
+                    // Helper: move past block as designated by opening and closing strings. Return the block as a string.
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_22">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_22">&#182;</a>
+							</div>
+							<p>Func<string, string, string> skipBlock = new Func<string, string, string>((open, close) =&gt;</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    {
+                        StringBuilder result = new StringBuilder();
+                        string tok = null;
+                        int depth = 0;
+                        while (tok != close || depth &gt; 0)
+                        {
+                            tok = next();
+                            result.Append(tok);
+                            if (tok == open)
+                                depth++;
+                            else if (tok == close)
+                                depth--;
+                        }
+
+                        return result.ToString();
+                    });
+
+                    // Helper: move past generic decl block
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_23">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_23">&#182;</a>
+							</div>
+							<p>Func<string> skipGeneric = new Func<string>(() =&gt;</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    {
+                        if (tokens.Peek() == &quot;&lt;&quot;) {
+                            return skipBlock(&quot;&lt;&quot;, &quot;&gt;&quot;);
+                        }
+                        return String.Empty;
+                    });
+
+                    // Helper: return the next token plus any possible generic portion
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_24">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_24">&#182;</a>
+							</div>
+							<p>Func<string> typeName = new Func<string>(() =&gt;</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    {
+                        skipNewlines();
+                        return next() + skipGeneric();   
+                    });
+
+                    string relpath = _pathHelper.MakeRelativePath(this.path);
+
+                    while (tokens.Count &gt; 0)
+                    {
+                        string tok = next();
+                        if (tok == System.Environment.NewLine)
+                            continue;
+
+                        if (tok.StartsWith(&quot;//&quot;))
+                        {
+                            iscomment = true;
+                            continue;
+                        }
+                        else if (tok.StartsWith(&quot;/*&quot;))
+                        {
+                            iscomment = true;
+                            emitMultilineToken(tok);
+                            iscomment = false;
+                            continue;
+                        }
+                        else
+                        {
+                            iscomment = false;
+                        }
+
+                        switch (tok)
+                        {
+                            case &quot;class&quot;:
+                                _typeMap.Add(typeName(), relpath, this.sourceLineNumber, TypeMap.TypeHint.Class);
+                                break;
+                            case &quot;delegate&quot;:
+                                skipNewlines();
+                                string n = next();
+                                if(n == &quot;{&quot; || n == &quot;(&quot;)
+                                {
+                                    // Indicates anonymous delegate
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_25">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_25">&#182;</a>
+							</div>
+							<p>break;</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                                }
+                                skipGeneric();
+                                _typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, TypeMap.TypeHint.Delegate);
+                                break;
+                            case &quot;struct&quot;:
+                                if (tokens.Peek() == &quot;{&quot; || tokens.Peek() == System.Environment.NewLine)
+                                {
+                                    // Indicates generic constraint
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_26">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_26">&#182;</a>
+							</div>
+							<p>break;</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>                                }
+                                _typeMap.Add(typeName(), relpath, this.sourceLineNumber, TypeMap.TypeHint.Struct);
+                                break;
+                            case &quot;enum&quot;:
+                                skipNewlines();
+                                _typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, TypeMap.TypeHint.Enum);
+                                break;
+                            case &quot;interface&quot;:
+                                skipNewlines();
+                                _typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, TypeMap.TypeHint.Interface);
+                                break;
+                        }
+                    }
+                }
+            }
+
+            // Emit either a comment or code line.
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_27">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_27">&#182;</a>
+							</div>
+							<p>protected void OnEmitLine(string line, bool iscomment)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>            {
+                if (!iscomment &amp;&amp; EmitLine != null)
+                    EmitLine(line, this.sourceLineNumber);
+                else if (iscomment &amp;&amp; EmitCommentLine != null)
+                    EmitCommentLine(line, this.sourceLineNumber);
+            }
+
+            public FileParser(string path)
+            {
+                using (StreamReader reader = new StreamReader(path))
+                {
+                    this.tokens = Lexer.Tokenize(reader);
+                }
+
+                this.path = path;
+            }
+        }
+
+        // Prepare sections for html output and execute razor template
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_28">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_28">&#182;</a>
+							</div>
+							<p>static void Generate(List<Section> sections, string[] sources, string codefile, Type templateType)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        {
+            int depth;
+            var destination = Path.Combine(&quot;docs&quot;, _pathHelper.MakeRelativePath(codefile));
+            Directory.CreateDirectory(Path.GetDirectoryName(destination));
+
+            string pathToRoot = &quot;&quot;;
+            depth = Path.GetDirectoryName(destination).Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Length - 1;
+            for (int i = 0; i &lt; depth; i++)
+            {
+                pathToRoot = Path.Combine(&quot;..&quot;, pathToRoot);
+            }
+
+            Func&lt;string, string&gt; getSourcePath = (string s) =&gt; {
+                return Path.Combine(pathToRoot, Path.ChangeExtension(s, &quot;.html&quot;)).Replace(&#39;\\&#39;, &#39;/&#39;);
+            };
+
+            foreach (Section s in sections)
+            {
+                s.DocsHtml = DownBlouse.DownBlouse.Markdownify(s.DocsHtml, smartypants: false);
+                s.CodeHtml = System.Web.HttpUtility.HtmlEncode(s.CodeHtml);
+
+                foreach (TypeMap.TypeInfo type in _typeMap)
+                {
+                    if (type.File != _pathHelper.MakeRelativePath(codefile)) 
+                        s.CodeHtml = s.CodeHtml.GSub(type.GetPattern(), &quot;$1&lt;a href=\&quot;&quot; + getSourcePath(type.File) + &quot;\&quot;&gt;$2&lt;/a&gt;$3&quot;);
+                }
+            }
+
+            var htmlTemplate = Activator.CreateInstance(templateType) as <a href="TemplateBase.html">TemplateBase</a>;
+            htmlTemplate.Title = Path.GetFileName(codefile);
+            htmlTemplate.GetResourcePath = (string s) =&gt; Path.Combine(pathToRoot, s);
+            htmlTemplate.GetSourcePath = getSourcePath;
+            htmlTemplate.Sections = sections;
+            htmlTemplate.Sources = new List&lt;string&gt;(from f in sources
+                                                    select _pathHelper.MakeRelativePath(f));
+
+            htmlTemplate.Execute();
+
+            // Overwrite existing file
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_29">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_29">&#182;</a>
+							</div>
+							<p>File.WriteAllText(Path.ChangeExtension(destination, &quot;.html&quot;), htmlTemplate.Buffer.ToString());</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        }
+
+        static void Verbose(string str, params object[] p)
+        {
+#if VERBOSE
+            Console.WriteLine(&quot;explain: {0}&quot;, String.Format(str, p));
+#endif
+        }
+
+        static void PrintUsage()
+        {
+            Console.WriteLine(&quot;Usage: explain &lt;file&gt;&quot;);
+            Console.WriteLine(&quot;&lt;file&gt; can be a .cs, .vb, .csproj, or .sln&quot;);
+        }
+
+        // The razor template is embedded inside the assembly.
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_30">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_30">&#182;</a>
+							</div>
+							<p>static Type SetupRazorTemplate()</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        {
+            RazorEngineHost host = new RazorEngineHost(new CSharpRazorCodeLanguage());
+            host.DefaultBaseClass = typeof(TemplateBase).FullName;
+            host.DefaultNamespace = &quot;RazorOutput&quot;;
+            host.DefaultClassName = &quot;Template&quot;;
+            host.NamespaceImports.Add(&quot;System&quot;);
+
+            GeneratorResults razorResult = null;
+
+            using (var reader = new StreamReader(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(&quot;Explain.Resources.explain.cshtml&quot;)))
+            {
+                razorResult = new RazorTemplateEngine(host).GenerateCode(reader);
+            }
+
+            var compilerParams = new CompilerParameters
+            {
+                GenerateInMemory = true,
+                GenerateExecutable = false,
+                IncludeDebugInformation = false,
+                CompilerOptions = &quot;/target:library /optimize&quot;
+            };
+            compilerParams.ReferencedAssemblies.Add(typeof(Program).Assembly.CodeBase.Replace(&quot;file:///&quot;, &quot;&quot;).Replace(&quot;/&quot;, &quot;\\&quot;));
+
+            var codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
+            CompilerResults results = codeProvider.CompileAssemblyFromDom(compilerParams, razorResult.GeneratedCode);
+
+            // Check for errors that may have occurred during template generation
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_31">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_31">&#182;</a>
+							</div>
+							<p>if (results.Errors.HasErrors)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>            {
+                foreach (var err in results.Errors.OfType&lt;CompilerError&gt;().Where(ce =&gt; !ce.IsWarning))
+                    Console.WriteLine(&quot;explain: Error compiling template: ({0}, {1}) {2}&quot;, err.Line, err.Column, err.ErrorText);
+
+                System.Environment.Exit(-1);
+            }
+
+            return results.CompiledAssembly.GetType(&quot;RazorOutput.Template&quot;);
+        }
+    }
+}
+
+</code></pre>
+						</td>
+					</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

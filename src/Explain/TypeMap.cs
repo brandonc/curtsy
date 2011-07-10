@@ -6,7 +6,7 @@ using System.Collections;
 
 namespace Explain
 {
-    class TypeMap : IEnumerable<TypeMap.TypeInfo>
+    public class TypeMap : IEnumerable<TypeMap.TypeInfo>
     {
         public class TypeInfo {
             public string Name { get; set; }

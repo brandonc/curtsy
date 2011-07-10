@@ -6,31 +6,26 @@ using System.IO;
 
 namespace Explain
 {
-    class PathHelper
+    // PathHelper is initialized with a root directory and can make other paths relative to it.
+    public class PathHelper
     {
-        public string FromPath { get; set; }
+        public string RootPath { get; set; }
 
-        /// <summary>
-        /// Creates a relative path from one file or folder to another.
-        /// </summary>
-        /// <param name="toPath">Contains the path that defines the endpoint of the relative path.</param>
-        /// <returns>The relative path from the start directory to the end path.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
         public string MakeRelativePath(string toPath)
         {
             if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
 
-            Uri fromUri = new Uri(FromPath);
+            Uri fromUri = new Uri(RootPath);
             Uri toUri = new Uri(toPath);
 
             return fromUri.MakeRelativeUri(toUri).ToString().Replace('/', Path.DirectorySeparatorChar);
         }
 
-        public PathHelper(string absoluteTargetPath)
+        public PathHelper(string rootPath)
         {
-            if (String.IsNullOrEmpty(absoluteTargetPath)) throw new ArgumentNullException("absoluteTargetPath");
+            if (String.IsNullOrEmpty(rootPath)) throw new ArgumentNullException("absoluteTargetPath");
 
-            FromPath = absoluteTargetPath;
+            RootPath = rootPath;
         }
     }
 }

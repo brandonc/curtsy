@@ -5,8 +5,7 @@ namespace Explain
 {
     public abstract class TemplateBase
     {
-
-        // Properties available from within the template
+        // These properties are available from within the template
         public string Title { get; set; }
         public Func<string, string> GetResourcePath { get; set; }
         public Func<string, string> GetSourcePath { get; set; }

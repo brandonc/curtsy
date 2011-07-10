@@ -38,31 +38,28 @@ namespace Explain
             FileInfo fi = new FileInfo(args[0]);
 
             IEnumerable<string> sources;
-            string root;
-
+            
             switch (Path.GetExtension(args[0]).ToLower())
             {
                 case ".cs":
                     sources = new string[] { fi.FullName };
-                    root = System.Environment.CurrentDirectory;
                     break;
                 default:
                     // Assume MSBuild
                     sources = ProbeMSBuildForSources(fi.FullName).ToArray();
-                    root = fi.DirectoryName;
                     break;
             }
 
-            Explain explain = new Explain(sources.ToList(), root);
+            var explain = new Explain(sources.ToList(), fi.DirectoryName);
             explain.Generate("docs");
 
             return 0;
         }
 
         // Open specified MSBuild file and return relative .cs file paths for each `<Compile>` element
-        static IEnumerable<string> ProbeMSBuildForSources(string projfile)
+        static List<string> ProbeMSBuildForSources(string projfile)
         {
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             try
             {
                 doc.Load(projfile);
@@ -84,13 +81,17 @@ namespace Explain
                 nsmgr.AddNamespace("msbuild", xmlns);
             }
 
-            foreach (XmlNode node in doc.SelectNodes(String.Format("//{0}Compile[@Include]", ns), nsmgr))
+            var nodes = doc.SelectNodes(String.Format("//{0}Compile[@Include]", ns), nsmgr);
+            var result = new List<string>(nodes.Count);
+            foreach (XmlNode node in nodes)
             {
                 if (!node.Attributes["Include"].Value.EndsWith(".cs"))
                     continue;
 
-                yield return Path.Combine(Path.GetDirectoryName(projfile), node.Attributes["Include"].Value);
+                result.Add(Path.Combine(Path.GetDirectoryName(projfile), node.Attributes["Include"].Value));
             }
+
+            return result;
         }
 
         static void Verbose(string str, params object[] p)
@@ -103,7 +104,7 @@ namespace Explain
         static void PrintUsage()
         {
             Console.WriteLine("Usage: explain <file>");
-            Console.WriteLine("<file> can be a .cs, .vb, .csproj, or .sln");
+            Console.WriteLine("<file> can be a .cs or .csproj file");
         }
     }
 }

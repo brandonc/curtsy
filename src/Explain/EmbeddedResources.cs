@@ -73,7 +73,7 @@ namespace Explain
                     IncludeDebugInformation = false,
                     CompilerOptions = "/target:library /optimize"
                 };
-                compilerParams.ReferencedAssemblies.Add(typeof(Program).Assembly.CodeBase.Replace("file:///", "").Replace('/', Path.PathSeparator));
+                compilerParams.ReferencedAssemblies.Add(typeof(Program).Assembly.CodeBase.Replace("file:///", "").Replace('/', Path.DirectorySeparatorChar));
 
                 var codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
                 var results = codeProvider.CompileAssemblyFromDom(compilerParams, razorResult.GeneratedCode);

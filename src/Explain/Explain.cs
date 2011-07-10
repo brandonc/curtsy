@@ -104,12 +104,13 @@ namespace Explain
         {
             var output = this.RootPathHelper.MakeRelativePath(codefile);
             var subdestination = Path.Combine(destinationDirectory, output);
+            Directory.CreateDirectory(Path.GetDirectoryName(subdestination));
 
-            string clientPathToRoot = String.Concat(Enumerable.Repeat<string>("../", output.Split(Path.PathSeparator).Length - 1));
+            string clientPathToRoot = String.Concat(Enumerable.Repeat<string>("../", output.Split(Path.DirectorySeparatorChar).Length - 1));
 
             Func<string, string> getSourcePath = (string s) =>
             {
-                return Path.Combine(clientPathToRoot, Path.ChangeExtension(s, ".html")).Replace(Path.PathSeparator, '/');
+                return Path.Combine(clientPathToRoot, Path.ChangeExtension(s, ".html").ToLower()).Replace(Path.DirectorySeparatorChar, '/');
             };
 
             foreach (Section s in sections)
@@ -142,7 +143,7 @@ namespace Explain
         {
             if (string.IsNullOrEmpty(rootDirectory))
                 rootDirectory = ".\\";
-            else if (rootDirectory[rootDirectory.Length - 1] != Path.PathSeparator)
+            else if (rootDirectory[rootDirectory.Length - 1] != Path.DirectorySeparatorChar)
                 rootDirectory += Path.DirectorySeparatorChar;
             
             if (sources == null)

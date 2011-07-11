@@ -1,7 +1,7 @@
 <!DOCTYPE html />
 <html>
 <head>
-	<title>TemplateBase.cs</title>
+	<title>Section.cs</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<link href="explain.css" rel="stylesheet" media="all" type="text/css" />
 	<script src="prettify.js" type="text/javascript"></script>
@@ -50,7 +50,7 @@
 			<thead>
 				<tr>
 					<th class="docs">
-						<h1>TemplateBase.cs</h1>
+						<h1>Section.cs</h1>
 					</th>
 					<th class="code"></th>
 				</tr>
@@ -64,64 +64,22 @@
 							
 						</td>
 						<td class="code">
-							<pre><code class='prettyprint'>using System.Text;
+							<pre><code class='prettyprint'>using System;
 using System.Collections.Generic;
-using System;
+using System.Linq;
+using System.Text;
+
 namespace Explain
 {
-    public abstract class TemplateBase
+    public class Section
     {
-</code></pre>
-						</td>
-					</tr>
-					<tr id="section_2">
-						<td class="docs">
-							<div class="pilwrap">
-								<a class="pilcrow" href="#section_2">&#182;</a>
-							</div>
-							<p>These properties are available from within the template</p>
-
-						</td>
-						<td class="code">
-							<pre><code class='prettyprint'>        public string Title { get; set; }
-        public Func&lt;string, string&gt; GetResourcePath { get; set; }
-        public Func&lt;string, string&gt; GetSourcePath { get; set; }
-        public List&lt;Section&gt; Sections { get; set; }
-        public List&lt;string&gt; Sources { get; set; }
-
-        public StringBuilder Buffer { get; set; }
-
-        public TemplateBase()
-        {
-            Buffer = new StringBuilder();
-        }
-
-</code></pre>
-						</td>
-					</tr>
-					<tr id="section_3">
-						<td class="docs">
-							<div class="pilwrap">
-								<a class="pilcrow" href="#section_3">&#182;</a>
-							</div>
-							<p>This <code>Execute</code> function will be defined in the inheriting template
-class. It generates the HTML by calling <code>Write</code> and <code>WriteLiteral</code>.</p>
-
-						</td>
-						<td class="code">
-							<pre><code class='prettyprint'>        public abstract void Execute();
-
-        public virtual void Write(object value)
-        {
-            WriteLiteral(value);
-        }
-
-        public virtual void WriteLiteral(object value)
-        {
-            Buffer.Append(value);
-        }
+        public string CodeHtml;
+        public string DocsHtml;
+        public int StartLine;
+        public int EndLine;
     }
 }
+
 </code></pre>
 						</td>
 					</tr>

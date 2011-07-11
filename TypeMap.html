@@ -13,22 +13,34 @@
 				Jump To &hellip;
 				<div id="jump_wrapper">
 					<div id="jump_page">
-							<a class="source" href="Extensions/StringRegexExtensions.html">
+							<a class="source" href="explain.html">
+								Explain.cs
+							</a>
+							<a class="source" href="extensions/stringregexextensions.html">
 								Extensions\StringRegexExtensions.cs
 							</a>
-							<a class="source" href="PathHelper.html">
+							<a class="source" href="parser,lexer.html">
+								Parser,Lexer.cs
+							</a>
+							<a class="source" href="pathhelper.html">
 								PathHelper.cs
 							</a>
-							<a class="source" href="Program.html">
+							<a class="source" href="program.html">
 								Program.cs
 							</a>
-							<a class="source" href="Properties/AssemblyInfo.html">
+							<a class="source" href="properties/assemblyinfo.html">
 								Properties\AssemblyInfo.cs
 							</a>
-							<a class="source" href="TemplateBase.html">
+							<a class="source" href="embeddedresources.html">
+								EmbeddedResources.cs
+							</a>
+							<a class="source" href="section.html">
+								Section.cs
+							</a>
+							<a class="source" href="templatebase.html">
 								TemplateBase.cs
 							</a>
-							<a class="source" href="TypeMap.html">
+							<a class="source" href="typemap.html">
 								TypeMap.cs
 							</a>
 					</div>
@@ -60,23 +72,13 @@ using System.Collections;
 
 namespace Explain
 {
-    class TypeMap : IEnumerable&lt;TypeMap.TypeInfo&gt;
+    public class FoundTypes : IEnumerable&lt;FoundTypes.TypeInfo&gt;
     {
         public class TypeInfo {
             public string Name { get; set; }
             public TypeHint Type { get; set; }
             public string File { get; set; }
             public int LineNumber { get; set; }
-
-            private string typebounds = @&quot;[\s\(;:,]&quot;;
-
-            public string GetPattern()
-            {
-                if(Name.IndexOf(&#39;&lt;&#39;) &gt; 0)
-                    return &quot;(&quot; + typebounds + &quot;)(&quot; + Name.Sub(@&quot;\&lt;\w+\&gt;&quot;, @&quot;&amp;lt;\w+&amp;gt;&quot;) + &quot;)(&quot; + typebounds + &quot;)&quot;;
-
-                return &quot;(&quot; + typebounds + &quot;)(&quot; + Name + &quot;)(&quot; + typebounds + &quot;)&quot;;
-            }
         }
 
         public enum TypeHint
@@ -95,11 +97,11 @@ namespace Explain
             types.Add(new Tuple&lt;string, string&gt;(name, file), new TypeInfo() { File = file, LineNumber = line, Name = name, Type = typehint });
         }
 
-        public TypeMap()
+        public FoundTypes()
         {
         }
 
-        IEnumerator&lt;TypeMap.TypeInfo&gt; IEnumerable&lt;TypeMap.TypeInfo&gt;.GetEnumerator()
+        IEnumerator&lt;FoundTypes.TypeInfo&gt; IEnumerable&lt;FoundTypes.TypeInfo&gt;.GetEnumerator()
         {
             return types.Values.ToList().GetEnumerator();
         }
@@ -110,6 +112,7 @@ namespace Explain
         }
     }
 }
+
 </code></pre>
 						</td>
 					</tr>

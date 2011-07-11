@@ -13,22 +13,34 @@
 				Jump To &hellip;
 				<div id="jump_wrapper">
 					<div id="jump_page">
-							<a class="source" href="Extensions/StringRegexExtensions.html">
+							<a class="source" href="explain.html">
+								Explain.cs
+							</a>
+							<a class="source" href="extensions/stringregexextensions.html">
 								Extensions\StringRegexExtensions.cs
 							</a>
-							<a class="source" href="PathHelper.html">
+							<a class="source" href="parser,lexer.html">
+								Parser,Lexer.cs
+							</a>
+							<a class="source" href="pathhelper.html">
 								PathHelper.cs
 							</a>
-							<a class="source" href="Program.html">
+							<a class="source" href="program.html">
 								Program.cs
 							</a>
-							<a class="source" href="Properties/AssemblyInfo.html">
+							<a class="source" href="properties/assemblyinfo.html">
 								Properties\AssemblyInfo.cs
 							</a>
-							<a class="source" href="TemplateBase.html">
+							<a class="source" href="embeddedresources.html">
+								EmbeddedResources.cs
+							</a>
+							<a class="source" href="section.html">
+								Section.cs
+							</a>
+							<a class="source" href="templatebase.html">
 								TemplateBase.cs
 							</a>
-							<a class="source" href="TypeMap.html">
+							<a class="source" href="typemap.html">
 								TypeMap.cs
 							</a>
 					</div>
@@ -60,28 +72,41 @@ using System.IO;
 
 namespace Explain
 {
-    class PathHelper
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_2">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_2">&#182;</a>
+							</div>
+							<p>PathHelper is initialized with a root directory and can make other paths relative to it.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    public class PathHelper
     {
-        public string FromPath { get; set; }
+        public string RootPath { get; set; }
 
         public string MakeRelativePath(string toPath)
         {
             if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException(&quot;toPath&quot;);
 
-            Uri fromUri = new Uri(FromPath);
+            Uri fromUri = new Uri(RootPath);
             Uri toUri = new Uri(toPath);
 
             return fromUri.MakeRelativeUri(toUri).ToString().Replace(&#39;/&#39;, Path.DirectorySeparatorChar);
         }
 
-        public PathHelper(string absoluteTargetPath)
+        public PathHelper(string rootPath)
         {
-            if (String.IsNullOrEmpty(absoluteTargetPath)) throw new ArgumentNullException(&quot;absoluteTargetPath&quot;);
+            if (String.IsNullOrEmpty(rootPath)) throw new ArgumentNullException(&quot;absoluteTargetPath&quot;);
 
-            FromPath = absoluteTargetPath;
+            RootPath = rootPath;
         }
     }
 }
+
 </code></pre>
 						</td>
 					</tr>

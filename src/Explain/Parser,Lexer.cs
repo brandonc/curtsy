@@ -86,7 +86,7 @@ namespace Explain
                 }
 
                 // `"` or `@` signals the start of a string literal
-                if (c == STRING_LITERAL || c == AT)
+                if (c == STRING_LITERAL || (c == AT && (char)reader.Peek() == STRING_LITERAL))
                 {
                     pushtoken();
                     token.Append(c);
@@ -170,7 +170,7 @@ namespace Explain
         readonly string path;
 
         int sourceLineNumber = 0;
-        TypeMap typeMap;
+        FoundTypes typeMap;
         PathHelper pathHelper;
 
         public void Parse()
@@ -248,18 +248,22 @@ namespace Explain
 
                 string relpath = pathHelper.MakeRelativePath(this.path);
 
+                bool islinebeginning = true;
                 while (tokens.Count > 0)
                 {
                     string tok = next();
                     if (tok == System.Environment.NewLine)
+                    {
+                        islinebeginning = true;
                         continue;
+                    }
 
-                    if (tok.StartsWith("//"))
+                    if (tok.StartsWith("//") && islinebeginning)
                     {
                         iscomment = true;
                         continue;
                     }
-                    else if (tok.StartsWith("/*"))
+                    else if (tok.StartsWith("/*") && islinebeginning)
                     {
                         iscomment = true;
                         emitMultilineToken(tok);
@@ -270,10 +274,12 @@ namespace Explain
                         iscomment = false;
                     }
 
+                    islinebeginning = false;
+
                     switch (tok)
                     {
                         case "class":
-                            typeMap.Add(typeName(), relpath, this.sourceLineNumber, TypeMap.TypeHint.Class);
+                            typeMap.Add(typeName(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Class);
                             break;
                         case "delegate":
                             skipNewlines();
@@ -284,7 +290,7 @@ namespace Explain
                                 break;
                             }
                             skipGeneric();
-                            typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, TypeMap.TypeHint.Delegate);
+                            typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Delegate);
                             break;
                         case "struct":
                             if (tokens.Peek() == "{" || tokens.Peek() == System.Environment.NewLine)
@@ -292,15 +298,15 @@ namespace Explain
                                 // Indicates generic constraint
                                 break;
                             }
-                            typeMap.Add(typeName(), relpath, this.sourceLineNumber, TypeMap.TypeHint.Struct);
+                            typeMap.Add(typeName(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Struct);
                             break;
                         case "enum":
                             skipNewlines();
-                            typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, TypeMap.TypeHint.Enum);
+                            typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Enum);
                             break;
                         case "interface":
                             skipNewlines();
-                            typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, TypeMap.TypeHint.Interface);
+                            typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Interface);
                             break;
                     }
                 }
@@ -318,7 +324,7 @@ namespace Explain
                 EmitCommentLine(line, this.sourceLineNumber);
         }
 
-        public FileParser(string path, TypeMap typeMap, PathHelper pathHelper)
+        public FileParser(string path, FoundTypes typeMap, PathHelper pathHelper)
         {
             using (StreamReader reader = new StreamReader(path))
             {

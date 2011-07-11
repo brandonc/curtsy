@@ -14,7 +14,7 @@ namespace Explain.Tests
         public void Multiline_comments_parses_correct_number_of_lines()
         {
             FileInfo file = new FileInfo("TestSource.cs");
-            FileParser p = new FileParser(file.FullName, new TypeMap(), new PathHelper(file.DirectoryName));
+            FileParser p = new FileParser(file.FullName, new FoundTypes(), new PathHelper(file.DirectoryName));
             int comments = 0;
             int code = 0;
             int lastline = 0;

@@ -17,9 +17,8 @@ This is a very early work in progress. Intellisense comments are ignored complet
 ### To do ###
 
 1. Type mapping is weak because namespace scope isn't taken into account.
-2. Move core files out of console app so self-documentation has a better title
-3. Hyperlinks within same file between sections
-4. Test weirder code and code with syntax errors
+2. Hyperlinks within same file between sections
+3. Test weirder code and code with syntax errors
 
 [docco]: http://jashkenas.github.com/docco/
 [nocco]: http://dontangg.github.com/nocco/

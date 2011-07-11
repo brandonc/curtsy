@@ -15,7 +15,7 @@ namespace Explain.Tests
         [TestCase]
         public void Multiline_comments_are_one_token()
         {
-            Queue<string> tokens = Lexer.Tokenize(new StreamReader("TestCode.cs"));
+            Queue<string> tokens = Lexer.Tokenize(new StreamReader("TestSource.cs"));
 
             string comment = tokens.Dequeue();
             Assert.AreEqual(4, comment.MatchesPattern(NL, "m").MatchCount);

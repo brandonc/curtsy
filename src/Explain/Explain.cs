@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Explain
 {
@@ -45,7 +46,7 @@ namespace Explain
 
         public void Generate(string destinationDirectory)
         {
-            TypeMap typeMap = new TypeMap();
+            FoundTypes typeMap = new FoundTypes();
             List<OutputUnit> output = new List<OutputUnit>();
 
             foreach (string codefile in this.Sources)
@@ -100,7 +101,7 @@ namespace Explain
         }
 
         // Prepare sections for html output and execute razor template
-        void GenerateInternal(List<Section> sections, string[] sources, string codefile, TypeMap typeMap, string destinationDirectory)
+        void GenerateInternal(List<Section> sections, string[] sources, string codefile, FoundTypes typeMap, string destinationDirectory)
         {
             var output = this.RootPathHelper.MakeRelativePath(codefile);
             var subdestination = Path.Combine(destinationDirectory, output);
@@ -113,15 +114,29 @@ namespace Explain
                 return Path.Combine(clientPathToRoot, Path.ChangeExtension(s, ".html").ToLower()).Replace(Path.DirectorySeparatorChar, '/');
             };
 
+            string typebounds = @"[\s\(;:,]+";
+
             foreach (Section s in sections)
             {
                 s.DocsHtml = DownBlouse.DownBlouse.Markdownify(s.DocsHtml);
                 s.CodeHtml = System.Web.HttpUtility.HtmlEncode(s.CodeHtml);
 
-                foreach (TypeMap.TypeInfo type in typeMap)
+                foreach (FoundTypes.TypeInfo type in typeMap)
                 {
+                    string pattern;
+
+                    if (type.Name.IndexOf('<') > 0)
+                        pattern = "(namespace)?(" + typebounds + ")(" + type.Name.Sub(@"\<\w+\>", @"&lt;\w+&gt;") + ")(" + typebounds + ")";
+
+                    pattern = "(namespace)?(" + typebounds + ")(" + type.Name + ")(" + typebounds + ")";
+
                     if (type.File != RootPathHelper.MakeRelativePath(codefile))
-                        s.CodeHtml = s.CodeHtml.GSub(type.GetPattern(), "$1<a href=\"" + getSourcePath(type.File) + "\">$2</a>$3");
+                        s.CodeHtml = s.CodeHtml.GSub(pattern, (Match m) => {
+                            if (String.IsNullOrEmpty(m.Groups[1].Value))
+                                return String.Format("{0}<a href=\"" + getSourcePath(type.File) + "\">{1}</a>{2}", m.Groups[2].Value, m.Groups[3].Value, m.Groups[4].Value);
+                            else
+                                return m.Groups[0].Value;
+                        });
                 }
             }
 

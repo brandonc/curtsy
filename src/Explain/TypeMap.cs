@@ -6,23 +6,13 @@ using System.Collections;
 
 namespace Explain
 {
-    public class TypeMap : IEnumerable<TypeMap.TypeInfo>
+    public class FoundTypes : IEnumerable<FoundTypes.TypeInfo>
     {
         public class TypeInfo {
             public string Name { get; set; }
             public TypeHint Type { get; set; }
             public string File { get; set; }
             public int LineNumber { get; set; }
-
-            private string typebounds = @"[\s\(;:,]";
-
-            public string GetPattern()
-            {
-                if(Name.IndexOf('<') > 0)
-                    return "(" + typebounds + ")(" + Name.Sub(@"\<\w+\>", @"&lt;\w+&gt;") + ")(" + typebounds + ")";
-
-                return "(" + typebounds + ")(" + Name + ")(" + typebounds + ")";
-            }
         }
 
         public enum TypeHint
@@ -41,11 +31,11 @@ namespace Explain
             types.Add(new Tuple<string, string>(name, file), new TypeInfo() { File = file, LineNumber = line, Name = name, Type = typehint });
         }
 
-        public TypeMap()
+        public FoundTypes()
         {
         }
 
-        IEnumerator<TypeMap.TypeInfo> IEnumerable<TypeMap.TypeInfo>.GetEnumerator()
+        IEnumerator<FoundTypes.TypeInfo> IEnumerable<FoundTypes.TypeInfo>.GetEnumerator()
         {
             return types.Values.ToList().GetEnumerator();
         }

@@ -18,7 +18,7 @@ namespace Explain
     class Program
     {
         
-        static TypeMap _typeMap = new TypeMap();
+        static FoundTypes _typeMap = new FoundTypes();
 
         static int Main(string[] args)
         {

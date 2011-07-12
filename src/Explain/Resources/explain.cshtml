@@ -28,6 +28,19 @@
 				<tr>
 					<th class="docs">
 						<h1>@Title</h1>
+                        @if (@Sources.Count > 1) {
+			                <div id="sources">
+					            <nav>
+                                    <ul>
+						            @for (var i = 0; i < Sources.Count; i++) {
+							            <li><a href="@GetSourcePath(Sources[i])">
+								            @Sources[i]
+							            </a></li>
+                                    }
+                                    </ul>
+					            </div>
+				            </div>
+                        }
 					</th>
                     <th class="lines"></th>
 					<th class="code">&nbsp;</th>

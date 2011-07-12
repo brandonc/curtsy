@@ -5,8 +5,12 @@ body {
   line-height: 22px;
   color: #252519;
   margin: 0; padding: 0;
+  background: #E0E7F0;
 }
-a {
+a { 
+  color: #3067ac;
+}
+a:visited {
   color: #261a3b;
 }
   a:visited {
@@ -47,11 +51,27 @@ h4, h5, h6 {
   border-left: 1px solid #e5e5ee;
   z-index: -1;
 }
+#sources {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    display: none;
+}
+
+#sources ul {
+    margin: 0;
+    padding: 0;
+}
+
+#sources li {
+    list-style-type: none;
+    margin: 0;
+}
 #jump_to, #jump_page {
-  background: white;
-  -webkit-box-shadow: 0 0 25px #777; -moz-box-shadow: 0 0 25px #777;
-  -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomleft: 5px;
-  font: 10px Arial;
+  background: #66747B;
+  -webkit-box-shadow: 0 0 15px #777; -moz-box-shadow: 0 0 15px #777;
+  -webkit-border-bottom-left-radius: 4px; -moz-border-radius-bottomleft: 4px;
+  font: 10px sans-serif;
   text-transform: uppercase;
   cursor: pointer;
   text-align: right;
@@ -76,12 +96,16 @@ h4, h5, h6 {
         display: block;
         padding: 5px 10px;
         text-decoration: none;
-        border-top: 1px solid #eee;
+        border-top: 1px solid #393939;
       }
         #jump_page .source:hover {
-          background: #f5f5ff;
+          background: #586f8b;
+          color: #fff;
         }
         #jump_page .source:first-child {
+        }
+        #jump_page a {
+            color: black;
         }
 table td {
   border: 0;
@@ -127,23 +151,26 @@ table td {
     text-align: right;
     font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
     font-size: 12px; line-height: 18px;
-    color: #ccc;
-    padding: 14px 14px 16px 14px;
-    background-color: #444;
+    color: #838383;
+    padding: 0 14px 16px 14px;
+    background-color: #393939;
   }
   td.code, th.code {
-    padding: 14px 15px 16px 25px;
+    padding: 0 15px 16px 25px;
     width: 100%;
     vertical-align: top;
-    background: #444;
+    background: #393939;
   }
   th.lines {
-      background-color: #444;
+      background-color: #393939;
   }
   td.code a, th.code a 
   {
       text-decoration: none;
       border-bottom: 1px dashed #93C763;
+  }
+  td.code a:hover, th.code a:hover {
+      color: #93C763;
   }
     pre, tt, code {
       font-size: 12px; line-height: 18px;
@@ -213,7 +240,7 @@ ol.linenums
     margin-bottom: 0;
 }
 .prettyprint {
-    background: #444;
+    background: #393939;
 }
 li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
 {

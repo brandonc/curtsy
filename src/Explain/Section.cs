@@ -11,5 +11,6 @@ namespace Explain
         public string DocsHtml;
         public int StartLine;
         public int EndLine;
+        public int CodeStartLine;
     }
 }

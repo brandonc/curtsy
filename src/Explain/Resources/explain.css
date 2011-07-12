@@ -1,6 +1,6 @@
 ﻿/*--------------------- Layout and Typography ----------------------------*/
 body {
-  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+  font-family: 'Bookman Old Style',Georgia,serif;
   font-size: 15px;
   line-height: 22px;
   color: #252519;
@@ -21,13 +21,21 @@ h4, h5, h6 {
   font-size: 13px;
 }
   h2, h3 {
-    margin-bottom: 0;
+    margin: 0;
     color: #000;
+    font-family: 'Droid Serif', Georgia, serif;
+    font-size: 28px;
+    line-height: 32px;
+    font-weight: normal;
   }
     h1 {
       margin-top: 40px;
       margin-bottom: 15px;
       color: #000;
+      font-family: 'Droid Serif', Georgia, serif;
+      font-size: 40px;
+      line-height: 60px;
+      font-weight: normal;
     }
 #container {
   position: relative;
@@ -114,17 +122,28 @@ table td {
         td.docs:hover .pilcrow {
           opacity: 1;
         }
+  td.lines {
+    width: auto;
+    text-align: right;
+    font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
+    font-size: 12px; line-height: 18px;
+    color: #ccc;
+    padding: 14px 14px 16px 14px;
+    background-color: #444;
+  }
   td.code, th.code {
     padding: 14px 15px 16px 25px;
     width: 100%;
     vertical-align: top;
-    background: #f5f5ff;
-    border-left: 1px solid #e5e5ee;
+    background: #444;
+  }
+  th.lines {
+      background-color: #444;
   }
   td.code a, th.code a 
   {
       text-decoration: none;
-      border-bottom: 1px dashed #606;
+      border-bottom: 1px dashed #93C763;
   }
     pre, tt, code {
       font-size: 12px; line-height: 18px;
@@ -133,4 +152,120 @@ table td {
     }
 
 /*---------------------- Prettify Syntax Highlighting -----------------------------*/
-.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun{color:#660}.pln{color:#000}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec{color:#606}pre.prettyprint{padding:2px;border:1px solid #888}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}@media print{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun{color:#440}.pln{color:#000}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}
+/*
+ * Derived from einaros's Sons of Obsidian theme at
+ * http://studiostyl.es/schemes/son-of-obsidian by
+ * Alex Ford of CodeTunnel:
+ * http://CodeTunnel.com/blog/post/71/google-code-prettify-obsidian-theme
+ */
+
+.str
+{
+    color: #EC7600;
+}
+.kwd
+{
+    color: #93C763;
+}
+.com
+{
+    color: #66747B;
+}
+.typ
+{
+    color: #678CB1;
+}
+.lit
+{
+    color: #FACD22;
+}
+.pun
+{
+    color: #F1F2F3;
+}
+.pln
+{
+    color: #F1F2F3;
+}
+.tag
+{
+    color: #8AC763;
+}
+.atn
+{
+    color: #E0E2E4;
+}
+.atv
+{
+    color: #EC7600;
+}
+.dec
+{
+    color: purple;
+}
+pre.prettyprint
+{
+    border: 0px solid #888;
+}
+ol.linenums
+{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.prettyprint {
+    background: #444;
+}
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+    color: #555;
+}
+li.L1, li.L3, li.L5, li.L7, li.L9 {
+    background: #111;
+}
+@media print
+{
+    .str
+    {
+        color: #060;
+    }
+    .kwd
+    {
+        color: #006;
+        font-weight: bold;
+    }
+    .com
+    {
+        color: #600;
+        font-style: italic;
+    }
+    .typ
+    {
+        color: #404;
+        font-weight: bold;
+    }
+    .lit
+    {
+        color: #044;
+    }
+    .pun
+    {
+        color: #440;
+    }
+    .pln
+    {
+        color: #000;
+    }
+    .tag
+    {
+        color: #006;
+        font-weight: bold;
+    }
+    .atn
+    {
+        color: #404;
+    }
+    .atv
+    {
+        color: #060;
+    }
+}

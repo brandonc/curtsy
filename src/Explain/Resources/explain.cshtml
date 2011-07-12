@@ -29,7 +29,8 @@
 					<th class="docs">
 						<h1>@Title</h1>
 					</th>
-					<th class="code"></th>
+                    <th class="lines"></th>
+					<th class="code">&nbsp;</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -41,6 +42,12 @@
 							</div>
 							@Sections[i].DocsHtml
 						</td>
+                        <td class="lines">
+                            @for (var z = Sections[i].CodeStartLine; z <= Sections[i].EndLine; z++)
+                            {
+                                @z<br />
+                            }
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>@Sections[i].CodeHtml</code></pre>
 						</td>

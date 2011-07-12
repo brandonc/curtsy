@@ -56,34 +56,56 @@ namespace Explain
                 var docsText = new StringBuilder();
                 var codeText = new StringBuilder();
 
-                Action<string, string> save = (string docs, string code) => sections.Add(new Section() { DocsHtml = docs, CodeHtml = code });
+                Action<string, string, int, int, int> save = (string docs, string code, int codeStartLine, int s, int e) => sections.Add(new Section() { DocsHtml = docs, CodeHtml = code, CodeStartLine = codeStartLine, StartLine = s, EndLine = e });
+
+                int? codeStart = null;
+                int? start = null;
+                int? end = null;
 
                 FileParser parser = new FileParser(codefile, typeMap, this.RootPathHelper);
                 parser.EmitCommentLine += delegate(string line, int sourceLineNumber)
                 {
-                    // Throw away intellisense documentation. It doesn't markdown well at all.
-                    if (line.TrimStart(' ', '\t').StartsWith("///"))
-                        return;
+                    if (!start.HasValue)
+                        start = sourceLineNumber;
 
                     if (hasCode)
                     {
-                        save(docsText.ToString(), codeText.ToString());
+                        end = sourceLineNumber;
+
+                        save(docsText.ToString(), codeText.ToString(), codeStart.HasValue ? codeStart.Value : 1, start.Value, end.Value);
+                        codeStart = null;
                         docsText.Clear();
                         codeText.Clear();
                         hasCode = false;
+                        start = null;
+                        end = null;
+                    } else
+                    {
+                        end = sourceLineNumber;
                     }
+
+                    // Throw away intellisense documentation. It doesn't markdown well at all.
+                    if (line.TrimStart(' ', '\t').StartsWith("///"))
+                        return;
 
                     docsText.AppendLine(line.TrimStart(' ', '\t', '/', '*'));
                 };
 
                 parser.EmitLine += delegate(string line, int sourceLineNumber)
                 {
+                    if (!codeStart.HasValue)
+                        codeStart = sourceLineNumber;
+
+                    if (!start.HasValue)
+                        start = sourceLineNumber;
+
+                    end = sourceLineNumber;
                     codeText.AppendLine(line);
                     hasCode = true;
                 };
 
                 parser.Parse();
-                save(docsText.ToString(), codeText.ToString());
+                save(docsText.ToString(), codeText.ToString(), codeStart.HasValue ? codeStart.Value : 0, start.Value, end.Value);
 
                 output.Add(new OutputUnit()
                 {
@@ -105,7 +127,7 @@ namespace Explain
         {
             var output = this.RootPathHelper.MakeRelativePath(codefile);
             var subdestination = Path.Combine(destinationDirectory, output);
-            Directory.CreateDirectory(Path.GetDirectoryName(subdestination));
+            Directory.CreateDirectory(Path.GetDirectoryName(subdestination).ToLower());
 
             string clientPathToRoot = String.Concat(Enumerable.Repeat<string>("../", output.Split(Path.DirectorySeparatorChar).Length - 1));
 

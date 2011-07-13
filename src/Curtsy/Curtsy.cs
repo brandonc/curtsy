@@ -1,24 +1,24 @@
 ﻿/*
-## Explain ##
+## Curtsy ##
 
-> A hyperlinked, readable, c#-to-annotated-html documentation generator.
+> A hyperlinked, readable, C#-to-annotated-html documentation generator.
 
-Explain is a fork of [nocco][]* that does some lexical analysis in order to provide type hyperlinking for c#.
+Curtsy is a fork of [nocco][]* that does some lexical analysis in order to provide type hyperlinking for c#.
 
 Nocco is simpler and yet can be run against more programming languages, comparatively speaking. It just doesn't hyperlink the source.
 
-This page is the result of running Explain against its own source file. The source for Explain is [available on GitHub][project], and released under the MIT license.
+This page is the result of running Curtsy against its own source file. The source for Curtsy is [available on GitHub][project], and released under the MIT license.
 
-You can run explain either against a `.csproj` file or against individual source files.
+You can run curtsy either against a `.csproj` file or against individual source files.
 
-Running this: `explain WindowsApplication1.csproj`
+Running this: `curtsy WindowsApplication1.csproj`
 
 will generate linked HTML documentation for the named source files, saving it into a new folder called "docs".
 
 <small>* nocco is a port of [docco][]!</small>
 
 [prettify]: http://code.google.com/p/google-code-prettify/
-[project]: https://github.com/brandonc/explain
+[project]: https://github.com/brandonc/curtsy
 [nocco]: http://dontangg.github.com/nocco/
 [docco]: http://jashkenas.github.com/docco/
 */
@@ -30,9 +30,9 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Explain
+namespace Curtsy
 {
-    public class Explain
+    public class Curtsy
     {
         public List<string> Sources { get; set; }
         public PathHelper RootPathHelper { get; set; }
@@ -189,9 +189,9 @@ namespace Explain
             File.WriteAllText(Path.ChangeExtension(subdestination, ".html").ToLower(), htmlTemplate.Buffer.ToString()); // Overwrites existing file
         }
 
-        // Create a new instance of the Explain engine. You have to specify the individual files to be used as well
+        // Create a new instance of the Curtsy engine. You have to specify the individual files to be used as well
         // as the root directory from which to resolve them and write the output "docs" folder
-        public Explain(List<string> sources, string rootDirectory)
+        public Curtsy(List<string> sources, string rootDirectory)
         {
             if (string.IsNullOrEmpty(rootDirectory))
                 rootDirectory = ".\\";

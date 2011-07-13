@@ -13,14 +13,14 @@ using System.Web.Razor;
 using System.Xml;
 using System.Collections;
 
-namespace Explain
+namespace Curtsy
 {
-    // This is the frontend for the [explain engine][1].
+    // This is the frontend for the [curtsy engine][1].
     // It accepts a single argument, either a `.cs` file or a `.csproj` file.
 
     // If the input is a csproj file, that file is probed for compilable cs files.
 
-    // [1]: explain.html
+    // [1]: index.html
     class Program
     {
         static FoundTypes _typeMap = new FoundTypes();
@@ -35,7 +35,7 @@ namespace Explain
 
             if (!File.Exists(args[0]))
             {
-                Console.WriteLine("explain: file not found");
+                Console.WriteLine("curtsy: file not found");
                 return -2;
             }
 
@@ -53,8 +53,8 @@ namespace Explain
                     break;
             }
 
-            var explain = new Explain(sources.ToList(), fi.DirectoryName);
-            explain.Generate("docs");
+            var curtsy = new Curtsy(sources.ToList(), fi.DirectoryName);
+            curtsy.Generate("docs");
 
             return 0;
         }
@@ -69,7 +69,7 @@ namespace Explain
             }
             catch (XmlException)
             {
-                Console.WriteLine("explain: {0} is not an msbuild file.", Path.GetFileName(projfile));
+                Console.WriteLine("curtsy: {0} is not an msbuild file.", Path.GetFileName(projfile));
                 Environment.Exit(-3);
             }
 
@@ -100,13 +100,13 @@ namespace Explain
         static void Verbose(string str, params object[] p)
         {
 #if VERBOSE
-            Console.WriteLine("explain: {0}", String.Format(str, p));
+            Console.WriteLine("curtsy: {0}", String.Format(str, p));
 #endif
         }
 
         static void PrintUsage()
         {
-            Console.WriteLine("Usage: explain <file>");
+            Console.WriteLine("Usage: curtsy <file>");
             Console.WriteLine("<file> can be a .cs or .csproj file");
         }
     }

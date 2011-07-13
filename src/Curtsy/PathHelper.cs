@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace Explain
+namespace Curtsy
 {
     // PathHelper is a helper class that accepts a root directory
     // and can produce relative paths to that directory given another path.

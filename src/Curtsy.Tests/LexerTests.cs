@@ -5,7 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using System.IO;
 
-namespace Explain.Tests
+namespace Curtsy.Tests
 {
     [TestFixture]
     public class LexerTests

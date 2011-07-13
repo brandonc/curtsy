@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using NUnit.Framework;
 
-namespace Explain.Tests
+namespace Curtsy.Tests
 {
     [TestFixture]
     class ParserTests

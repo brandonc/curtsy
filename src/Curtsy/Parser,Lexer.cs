@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace Explain
+namespace Curtsy
 {
     // The tokenizer produces a `Queue<string>` of tokens for a specified file stream.
     // String literals and comments are aggregated into single tokens.

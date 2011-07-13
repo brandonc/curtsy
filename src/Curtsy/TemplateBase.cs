@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Collections.Generic;
 using System;
-namespace Explain
+namespace Curtsy
 {
     // TemplateBase serves as the base class for the object that will generated
     // by compiling the embedded razor template. The template itself will use the

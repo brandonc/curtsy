@@ -5,12 +5,12 @@ using System.Linq;
 using System.Web.Razor;
 using System.Text;
 
-namespace Explain
+namespace Curtsy
 {
     public class EmbeddedResources
     {
         Type templateType = null;
-        string[] clientFiles = { "prettify.js", "explain.css" };
+        string[] clientFiles = { "prettify.js", "curtsy.css" };
 
         // Writes each file designated as a client file from the embedded resources folder
         // into the specified directory, unless that file already exists.
@@ -29,9 +29,9 @@ namespace Explain
                 {
                     using (var writer = File.CreateText(outputFile))
                     {
-                        Stream s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Explain.Resources." + res);
+                        Stream s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Curtsy.Resources." + res);
                         if (s == null)
-                            throw new InvalidDataException("Could not find embedded resource 'Explain.Resources." + res + "'");
+                            throw new InvalidDataException("Could not find embedded resource 'Curtsy.Resources." + res + "'");
 
                         using (var reader = new StreamReader(s))
                         {
@@ -61,10 +61,10 @@ namespace Explain
 
                 GeneratorResults razorResult = null;
 
-                var templateStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Explain.Resources.explain.cshtml");
+                var templateStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Curtsy.Resources.curtsy.cshtml");
 
                 if (templateStream == null)
-                    throw new FileNotFoundException("Could not find embedded resource 'Explain.Resources.explain.cshtml'");
+                    throw new FileNotFoundException("Could not find embedded resource 'Curtsy.Resources.curtsy.cshtml'");
 
                 using (var reader = new StreamReader(templateStream))
                 {

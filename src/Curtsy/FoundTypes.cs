@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace Explain
+namespace Curtsy
 {
     // Maintains meta data about types encountered during the parsing process.
     public class FoundTypes : IEnumerable<FoundTypes.TypeInfo>

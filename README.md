@@ -4,11 +4,12 @@
 
 [See example output][pages]
 
-Curtsy is a fork of [nocco][]* that does some lexical analysis in order to provide type hyperlinking for c#.
+Curtsy is a fork of [nocco][] that does some lexical analysis in order to provide type hyperlinking for c#.
 
-Nocco is simpler and yet can be run against more programming languages, comparatively speaking. It just doesn't hyperlink the source.
+Running this: curtsy ClassLibrary1.csproj
 
-<small>* nocco is a port of [docco][]!</small>
+will generate linked HTML documentation for the named source files, saving it into a new folder called “docs”.
+
 
 ### Caveats ###
 

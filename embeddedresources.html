@@ -1,7 +1,7 @@
 <!DOCTYPE html />
 <html>
 <head>
-	<title>Program.cs</title>
+	<title>EmbeddedResources.cs</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<link href="explain.css" rel="stylesheet" media="all" type="text/css" />
 	<script src="prettify.js" type="text/javascript"></script>
@@ -10,7 +10,7 @@
 	<div id="container">
 		<div id="background"></div>
 			<div id="sources" class="dd">
-				Program.cs
+				EmbeddedResources.cs
                 <div class="ddbtn"></div>
                 <header></header>
                 <nav>
@@ -82,7 +82,7 @@
 			<thead>
 				<tr>
 					<th class="docs">
-						<h1>Program.cs</h1>
+						<h1>EmbeddedResources.cs</h1>
 					</th>
                     <th class="lines"></th>
 					<th class="code">&nbsp;</th>
@@ -112,28 +112,22 @@
 13<br />
 14<br />
 15<br />
-16<br />
-17<br />
-18<br />
                         </td>
 						<td class="code">
-							<pre><code class='prettyprint'>#if DEBUG
-#define VERBOSE
-#endif
-
-using System;
+							<pre><code class='prettyprint'>using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Web.Razor;
-using System.Xml;
-using System.Collections;
+using System.Text;
 
 namespace Explain
 {
+    public class EmbeddedResources
+    {
+        Type templateType = null;
+        string[] clientFiles = { &quot;prettify.js&quot;, &quot;explain.css&quot; };
+
 </code></pre>
 						</td>
 					</tr>
@@ -142,13 +136,18 @@ namespace Explain
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_2">&#182;</a>
 							</div>
-							<p>This is the frontend for the <a href="explain.cs">explain engine</a>.
-It accepts a single argument, either a <code>.cs</code> file or a <code>.csproj</code> file.</p>
-
-<p>If the input is a csproj file, that file is probed for compilable cs files.</p>
+							<p>Writes each file designated as a client file from the embedded resources folder
+into the specified directory, unless that file already exists.</p>
 
 						</td>
                         <td class="lines">
+17<br />
+18<br />
+19<br />
+20<br />
+21<br />
+22<br />
+23<br />
 24<br />
 25<br />
 26<br />
@@ -175,8 +174,54 @@ It accepts a single argument, either a <code>.cs</code> file or a <code>.csproj<
 47<br />
 48<br />
 49<br />
-50<br />
-51<br />
+                        </td>
+						<td class="code">
+							<pre><code class='prettyprint'>        public void WriteClientFilesTo(string path)
+        {
+            Directory.CreateDirectory(path);
+
+            foreach (string res in clientFiles)
+            {
+                string outputFile = Path.Combine(path, res);
+
+                if (File.Exists(outputFile))
+                    continue;
+
+                try
+                {
+                    using (var writer = File.CreateText(outputFile))
+                    {
+                        Stream s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(&quot;Explain.Resources.&quot; + res);
+                        if (s == null)
+                            throw new InvalidDataException(&quot;Could not find embedded resource &#39;Explain.Resources.&quot; + res + &quot;&#39;&quot;);
+
+                        using (var reader = new StreamReader(s))
+                        {
+                            writer.Write(reader.ReadToEnd());
+                        }
+                    }
+                }
+                catch
+                {
+                    try { File.Delete(outputFile); } catch { }
+                }
+            }
+        }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_3">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_3">&#182;</a>
+							</div>
+							<p>Returns an instance of the razor template, compiled from the file stored as an embedded resource.
+The first time this method is executed, the Razor template is compiled and stored.
+This method will throw an InvalidDataException if the template contains syntax errors.</p>
+
+						</td>
+                        <td class="lines">
 52<br />
 53<br />
 54<br />
@@ -188,58 +233,6 @@ It accepts a single argument, either a <code>.cs</code> file or a <code>.csproj<
 60<br />
 61<br />
 62<br />
-                        </td>
-						<td class="code">
-							<pre><code class='prettyprint'>    class Program
-    {
-        static <a href="foundtypes.html">FoundTypes</a> _typeMap = new <a href="foundtypes.html">FoundTypes</a>();
-
-        static int Main(string[] args)
-        {
-            if (args.Length != 1)
-            {
-                PrintUsage();
-                return -1;
-            }
-
-            if (!File.Exists(args[0]))
-            {
-                Console.WriteLine(&quot;explain: file not found&quot;);
-                return -2;
-            }
-
-            FileInfo fi = new FileInfo(args[0]);
-
-            IEnumerable&lt;string&gt; sources;
-            
-            switch (Path.GetExtension(args[0]).ToLower())
-            {
-                case &quot;.cs&quot;:
-                    sources = new string[] { fi.FullName };
-                    break;
-                default: // Assume MSBuild
-                    sources = ProbeMSBuildForSources(fi.FullName).ToArray();
-                    break;
-            }
-
-            var explain = new <a href="explain.html">Explain</a>(sources.ToList(), fi.DirectoryName);
-            explain.Generate(&quot;docs&quot;);
-
-            return 0;
-        }
-
-</code></pre>
-						</td>
-					</tr>
-					<tr id="section_3">
-						<td class="docs">
-							<div class="pilwrap">
-								<a class="pilcrow" href="#section_3">&#182;</a>
-							</div>
-							<p>Open specified MSBuild file and return relative .cs file paths for each <code>&lt;Compile&gt;</code> element</p>
-
-						</td>
-                        <td class="lines">
 63<br />
 64<br />
 65<br />
@@ -280,68 +273,55 @@ It accepts a single argument, either a <code>.cs</code> file or a <code>.csproj<
 100<br />
 101<br />
 102<br />
-103<br />
-104<br />
-105<br />
-106<br />
-107<br />
-108<br />
-109<br />
-110<br />
-111<br />
-112<br />
-113<br />
-114<br />
                         </td>
 						<td class="code">
-							<pre><code class='prettyprint'>        static List&lt;string&gt; ProbeMSBuildForSources(string projfile)
+							<pre><code class='prettyprint'>        public <a href="templatebase.html">TemplateBase</a> CreateRazorTemplateInstance()
         {
-            var doc = new XmlDocument();
-            try
+            if (templateType == null)
             {
-                doc.Load(projfile);
+                var host = new RazorEngineHost(new CSharpRazorCodeLanguage());
+                host.DefaultBaseClass = typeof(TemplateBase).FullName;
+                host.DefaultNamespace = &quot;RazorOutput&quot;;
+                host.DefaultClassName = &quot;Template&quot;;
+                host.NamespaceImports.Add(&quot;System&quot;);
+
+                GeneratorResults razorResult = null;
+
+                var templateStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(&quot;Explain.Resources.explain.cshtml&quot;);
+
+                if (templateStream == null)
+                    throw new FileNotFoundException(&quot;Could not find embedded resource &#39;Explain.Resources.explain.cshtml&#39;&quot;);
+
+                using (var reader = new StreamReader(templateStream))
+                {
+                    razorResult = new RazorTemplateEngine(host).GenerateCode(reader);
+                }
+
+                var compilerParams = new CompilerParameters
+                {
+                    GenerateInMemory = true,
+                    GenerateExecutable = false,
+                    IncludeDebugInformation = false,
+                    CompilerOptions = &quot;/target:library /optimize&quot;
+                };
+                compilerParams.ReferencedAssemblies.Add(typeof(Program).Assembly.CodeBase.Replace(&quot;file:///&quot;, &quot;&quot;).Replace(&#39;/&#39;, Path.DirectorySeparatorChar));
+
+                var codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
+                var results = codeProvider.CompileAssemblyFromDom(compilerParams, razorResult.GeneratedCode);
+
+                if (results.Errors.HasErrors)
+                {
+                    StringBuilder errors = new StringBuilder();
+                    foreach (var err in results.Errors.OfType&lt;CompilerError&gt;().Where(ce =&gt; !ce.IsWarning))
+                        errors.AppendFormat(&quot;Error compiling template: ({0}, {1}) {2}&quot;, err.Line, err.Column, err.ErrorText);
+
+                    throw new InvalidDataException(errors.ToString());
+                }
+
+                templateType = results.CompiledAssembly.GetType(&quot;RazorOutput.Template&quot;);
             }
-            catch (XmlException)
-            {
-                Console.WriteLine(&quot;explain: {0} is not an msbuild file.&quot;, Path.GetFileName(projfile));
-                Environment.Exit(-3);
-            }
 
-            
-            var nsmgr = new XmlNamespaceManager(doc.NameTable);
-            string ns = &quot;&quot;;
-
-            if (doc.DocumentElement.Attributes[&quot;xmlns&quot;] != null)
-            {
-                ns = &quot;msbuild:&quot;;
-                string xmlns = doc.DocumentElement.Attributes[&quot;xmlns&quot;].Value;
-                nsmgr.AddNamespace(&quot;msbuild&quot;, xmlns);
-            }
-
-            var nodes = doc.SelectNodes(String.Format(&quot;//{0}Compile[@Include]&quot;, ns), nsmgr);
-            var result = new List&lt;string&gt;(nodes.Count);
-            foreach (XmlNode node in nodes)
-            {
-                if (!node.Attributes[&quot;Include&quot;].Value.EndsWith(&quot;.cs&quot;))
-                    continue;
-
-                result.Add(Path.Combine(Path.GetDirectoryName(projfile), node.Attributes[&quot;Include&quot;].Value));
-            }
-
-            return result;
-        }
-
-        static void Verbose(string str, params object[] p)
-        {
-#if VERBOSE
-            Console.WriteLine(&quot;explain: {0}&quot;, String.Format(str, p));
-#endif
-        }
-
-        static void PrintUsage()
-        {
-            Console.WriteLine(&quot;Usage: explain &lt;file&gt;&quot;);
-            Console.WriteLine(&quot;&lt;file&gt; can be a .cs or .csproj file&quot;);
+            return (TemplateBase)Activator.CreateInstance(templateType);
         }
     }
 }

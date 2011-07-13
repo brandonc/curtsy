@@ -16,7 +16,7 @@
                 <nav>
                     <table border="0" cellspacing="0">
 							<tr>
-                                <td class="size">8.92 KB</td>
+                                <td class="size">8.35 KB</td>
                                 <td><a class="source" href="explain.html">
 								    Explain.cs
 							    </a></td>
@@ -28,25 +28,19 @@
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">1.76 KB</td>
-                                <td><a class="source" href="foundtypes.html">
-								    FoundTypes.cs
-							    </a></td>
-                            </tr>
-							<tr>
-                                <td class="size">12.6 KB</td>
+                                <td class="size">12.34 KB</td>
                                 <td><a class="source" href="parser,lexer.html">
 								    Parser,Lexer.cs
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">1.02 KB</td>
+                                <td class="size">898 B</td>
                                 <td><a class="source" href="pathhelper.html">
 								    PathHelper.cs
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">3.27 KB</td>
+                                <td class="size">3.16 KB</td>
                                 <td><a class="source" href="program.html">
 								    Program.cs
 							    </a></td>
@@ -58,21 +52,27 @@
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">4.17 KB</td>
+                                <td class="size">3.79 KB</td>
                                 <td><a class="source" href="embeddedresources.html">
 								    EmbeddedResources.cs
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">645 B</td>
+                                <td class="size">506 B</td>
                                 <td><a class="source" href="section.html">
 								    Section.cs
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">1.19 KB</td>
+                                <td class="size">1.05 KB</td>
                                 <td><a class="source" href="templatebase.html">
 								    TemplateBase.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.3 KB</td>
+                                <td><a class="source" href="typemap.html">
+								    TypeMap.cs
 							    </a></td>
                             </tr>
                     </table>
@@ -103,6 +103,8 @@
 4<br />
 5<br />
 6<br />
+7<br />
+8<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>using System.Text;
@@ -110,6 +112,8 @@ using System.Collections.Generic;
 using System;
 namespace Explain
 {
+    public abstract class TemplateBase
+    {
 </code></pre>
 						</td>
 					</tr>
@@ -118,9 +122,7 @@ namespace Explain
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_2">&#182;</a>
 							</div>
-							<p>TemplateBase serves as the base class for the object that will generated
-by compiling the embedded razor template. The template itself will use the
-public members to render its contents.</p>
+							<p>These properties are available from within the template</p>
 
 						</td>
                         <td class="lines">
@@ -138,13 +140,9 @@ public members to render its contents.</p>
 20<br />
 21<br />
 22<br />
-23<br />
-24<br />
                         </td>
 						<td class="code">
-							<pre><code class='prettyprint'>    public abstract class TemplateBase
-    {
-        public string Title { get; set; }
+							<pre><code class='prettyprint'>        public string Title { get; set; }
         public Func&lt;string, string&gt; GetResourcePath { get; set; }
         public Func&lt;string, string&gt; GetSourcePath { get; set; }
         public List&lt;Section&gt; Sections { get; set; }
@@ -170,6 +168,8 @@ class. It generates the HTML by calling <code>Write</code> and <code>WriteLitera
 
 						</td>
                         <td class="lines">
+24<br />
+25<br />
 26<br />
 27<br />
 28<br />
@@ -181,8 +181,6 @@ class. It generates the HTML by calling <code>Write</code> and <code>WriteLitera
 34<br />
 35<br />
 36<br />
-37<br />
-38<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public abstract void Execute();

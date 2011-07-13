@@ -16,7 +16,7 @@
                 <nav>
                     <table border="0" cellspacing="0">
 							<tr>
-                                <td class="size">8.92 KB</td>
+                                <td class="size">8.35 KB</td>
                                 <td><a class="source" href="explain.html">
 								    Explain.cs
 							    </a></td>
@@ -28,25 +28,19 @@
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">1.76 KB</td>
-                                <td><a class="source" href="foundtypes.html">
-								    FoundTypes.cs
-							    </a></td>
-                            </tr>
-							<tr>
-                                <td class="size">12.6 KB</td>
+                                <td class="size">12.34 KB</td>
                                 <td><a class="source" href="parser,lexer.html">
 								    Parser,Lexer.cs
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">1.02 KB</td>
+                                <td class="size">898 B</td>
                                 <td><a class="source" href="pathhelper.html">
 								    PathHelper.cs
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">3.27 KB</td>
+                                <td class="size">3.16 KB</td>
                                 <td><a class="source" href="program.html">
 								    Program.cs
 							    </a></td>
@@ -58,21 +52,27 @@
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">4.17 KB</td>
+                                <td class="size">3.79 KB</td>
                                 <td><a class="source" href="embeddedresources.html">
 								    EmbeddedResources.cs
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">645 B</td>
+                                <td class="size">506 B</td>
                                 <td><a class="source" href="section.html">
 								    Section.cs
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">1.19 KB</td>
+                                <td class="size">1.05 KB</td>
                                 <td><a class="source" href="templatebase.html">
 								    TemplateBase.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.3 KB</td>
+                                <td><a class="source" href="typemap.html">
+								    TypeMap.cs
 							    </a></td>
                             </tr>
                     </table>
@@ -115,6 +115,12 @@
 16<br />
 17<br />
 18<br />
+19<br />
+20<br />
+21<br />
+22<br />
+23<br />
+24<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>#if DEBUG
@@ -134,6 +140,12 @@ using System.Collections;
 
 namespace Explain
 {
+    class Program
+    {
+        static <a href="typemap.html">FoundTypes</a> _typeMap = new <a href="typemap.html">FoundTypes</a>();
+
+        static int Main(string[] args)
+        {
 </code></pre>
 						</td>
 					</tr>
@@ -142,14 +154,10 @@ namespace Explain
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_2">&#182;</a>
 							</div>
-							<p>This is the frontend for the <a href="explain.cs">explain engine</a>.
-It accepts a single argument, either a <code>.cs</code> file or a <code>.csproj</code> file.</p>
-
-<p>If the input is a csproj file, that file is probed for compilable cs files.</p>
+							<p>Explain only expects one argument: the target file. That can be either a .cs file or msbuild .csproj file.</p>
 
 						</td>
                         <td class="lines">
-24<br />
 25<br />
 26<br />
 27<br />
@@ -173,30 +181,9 @@ It accepts a single argument, either a <code>.cs</code> file or a <code>.csproj<
 45<br />
 46<br />
 47<br />
-48<br />
-49<br />
-50<br />
-51<br />
-52<br />
-53<br />
-54<br />
-55<br />
-56<br />
-57<br />
-58<br />
-59<br />
-60<br />
-61<br />
-62<br />
                         </td>
 						<td class="code">
-							<pre><code class='prettyprint'>    class Program
-    {
-        static <a href="foundtypes.html">FoundTypes</a> _typeMap = new <a href="foundtypes.html">FoundTypes</a>();
-
-        static int Main(string[] args)
-        {
-            if (args.Length != 1)
+							<pre><code class='prettyprint'>            if (args.Length != 1)
             {
                 PrintUsage();
                 return -1;
@@ -217,8 +204,33 @@ It accepts a single argument, either a <code>.cs</code> file or a <code>.csproj<
                 case &quot;.cs&quot;:
                     sources = new string[] { fi.FullName };
                     break;
-                default: // Assume MSBuild
-                    sources = ProbeMSBuildForSources(fi.FullName).ToArray();
+                default:
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_3">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_3">&#182;</a>
+							</div>
+							<p>Assume MSBuild</p>
+
+						</td>
+                        <td class="lines">
+48<br />
+49<br />
+50<br />
+51<br />
+52<br />
+53<br />
+54<br />
+55<br />
+56<br />
+57<br />
+58<br />
+                        </td>
+						<td class="code">
+							<pre><code class='prettyprint'>                    sources = ProbeMSBuildForSources(fi.FullName).ToArray();
                     break;
             }
 
@@ -231,15 +243,19 @@ It accepts a single argument, either a <code>.cs</code> file or a <code>.csproj<
 </code></pre>
 						</td>
 					</tr>
-					<tr id="section_3">
+					<tr id="section_4">
 						<td class="docs">
 							<div class="pilwrap">
-								<a class="pilcrow" href="#section_3">&#182;</a>
+								<a class="pilcrow" href="#section_4">&#182;</a>
 							</div>
 							<p>Open specified MSBuild file and return relative .cs file paths for each <code>&lt;Compile&gt;</code> element</p>
 
 						</td>
                         <td class="lines">
+59<br />
+60<br />
+61<br />
+62<br />
 63<br />
 64<br />
 65<br />
@@ -288,10 +304,6 @@ It accepts a single argument, either a <code>.cs</code> file or a <code>.csproj<
 108<br />
 109<br />
 110<br />
-111<br />
-112<br />
-113<br />
-114<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        static List&lt;string&gt; ProbeMSBuildForSources(string projfile)

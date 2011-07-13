@@ -1,10 +1,10 @@
-# Explain #
+# Curtsy #
 
 > A hyperlinked, readable, c#-to-annotated-html documentation generator.
 
 [See example output][pages]
 
-Explain is a fork of [nocco][]* that does some lexical analysis in order to provide type hyperlinking for c#.
+Curtsy is a fork of [nocco][]* that does some lexical analysis in order to provide type hyperlinking for c#.
 
 Nocco is simpler and yet can be run against more programming languages, comparatively speaking. It just doesn't hyperlink the source.
 

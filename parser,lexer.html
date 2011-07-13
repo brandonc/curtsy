@@ -9,42 +9,74 @@
 <body onload="prettyPrint()">
 	<div id="container">
 		<div id="background"></div>
-			<div id="jump_to">
-				Jump To &hellip;
-				<div id="jump_wrapper">
-					<div id="jump_page">
-							<a class="source" href="explain.html">
-								Explain.cs
-							</a>
-							<a class="source" href="extensions/stringregexextensions.html">
-								Extensions\StringRegexExtensions.cs
-							</a>
-							<a class="source" href="parser,lexer.html">
-								Parser,Lexer.cs
-							</a>
-							<a class="source" href="pathhelper.html">
-								PathHelper.cs
-							</a>
-							<a class="source" href="program.html">
-								Program.cs
-							</a>
-							<a class="source" href="properties/assemblyinfo.html">
-								Properties\AssemblyInfo.cs
-							</a>
-							<a class="source" href="embeddedresources.html">
-								EmbeddedResources.cs
-							</a>
-							<a class="source" href="section.html">
-								Section.cs
-							</a>
-							<a class="source" href="templatebase.html">
-								TemplateBase.cs
-							</a>
-							<a class="source" href="typemap.html">
-								TypeMap.cs
-							</a>
-					</div>
-				</div>
+			<div id="sources" class="dd">
+				Parser,Lexer.cs
+                <div class="ddbtn"></div>
+                <header></header>
+                <nav>
+                    <table border="0" cellspacing="0">
+							<tr>
+                                <td class="size">8.35 KB</td>
+                                <td><a class="source" href="explain.html">
+								    Explain.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">37.19 KB</td>
+                                <td><a class="source" href="extensions/stringregexextensions.html">
+								    Extensions\StringRegexExtensions.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">12.34 KB</td>
+                                <td><a class="source" href="parser,lexer.html">
+								    Parser,Lexer.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">898 B</td>
+                                <td><a class="source" href="pathhelper.html">
+								    PathHelper.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">3.16 KB</td>
+                                <td><a class="source" href="program.html">
+								    Program.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.46 KB</td>
+                                <td><a class="source" href="properties/assemblyinfo.html">
+								    Properties\AssemblyInfo.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">3.79 KB</td>
+                                <td><a class="source" href="embeddedresources.html">
+								    EmbeddedResources.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">506 B</td>
+                                <td><a class="source" href="section.html">
+								    Section.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.05 KB</td>
+                                <td><a class="source" href="templatebase.html">
+								    TemplateBase.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.3 KB</td>
+                                <td><a class="source" href="typemap.html">
+								    TypeMap.cs
+							    </a></td>
+                            </tr>
+                    </table>
+				</nav>
 			</div>
 		<table cellpadding="0" cellspacing="0">
 			<thead>
@@ -52,7 +84,8 @@
 					<th class="docs">
 						<h1>Parser,Lexer.cs</h1>
 					</th>
-					<th class="code"></th>
+                    <th class="lines"></th>
+					<th class="code">&nbsp;</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -63,6 +96,17 @@
 							</div>
 							
 						</td>
+                        <td class="lines">
+1<br />
+2<br />
+3<br />
+4<br />
+5<br />
+6<br />
+7<br />
+8<br />
+9<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>using System;
 using System.Collections.Generic;
@@ -84,6 +128,30 @@ namespace Explain
 String literals and comments are aggregated into single tokens.</p>
 
 						</td>
+                        <td class="lines">
+11<br />
+12<br />
+13<br />
+14<br />
+15<br />
+16<br />
+17<br />
+18<br />
+19<br />
+20<br />
+21<br />
+22<br />
+23<br />
+24<br />
+25<br />
+26<br />
+27<br />
+28<br />
+29<br />
+30<br />
+31<br />
+32<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>    public class Lexer
     {
@@ -117,6 +185,21 @@ String literals and comments are aggregated into single tokens.</p>
 							<p>Continue adding characters to the specified token until an unescaped character is encountered</p>
 
 						</td>
+                        <td class="lines">
+33<br />
+34<br />
+35<br />
+36<br />
+37<br />
+38<br />
+39<br />
+40<br />
+41<br />
+42<br />
+43<br />
+44<br />
+45<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        static void ChompUntil(char until, StreamReader reader, StringBuilder token)
         {
@@ -141,6 +224,44 @@ String literals and comments are aggregated into single tokens.</p>
 							<p>Continue adding characters to the specified token until string is encountered (inclusive of string)</p>
 
 						</td>
+                        <td class="lines">
+46<br />
+47<br />
+48<br />
+49<br />
+50<br />
+51<br />
+52<br />
+53<br />
+54<br />
+55<br />
+56<br />
+57<br />
+58<br />
+59<br />
+60<br />
+61<br />
+62<br />
+63<br />
+64<br />
+65<br />
+66<br />
+67<br />
+68<br />
+69<br />
+70<br />
+71<br />
+72<br />
+73<br />
+74<br />
+75<br />
+76<br />
+77<br />
+78<br />
+79<br />
+80<br />
+81<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        static void ChompUntil(string until, StreamReader reader, StringBuilder token)
         {
@@ -188,6 +309,15 @@ String literals and comments are aggregated into single tokens.</p>
 							<p>Non-newline white space is the primary signal for the end of a token.</p>
 
 						</td>
+                        <td class="lines">
+82<br />
+83<br />
+84<br />
+85<br />
+86<br />
+87<br />
+88<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                if (Char.IsWhiteSpace(c))
                 {
@@ -206,6 +336,21 @@ String literals and comments are aggregated into single tokens.</p>
 							<p><code>&ldquo;</code> or <code>@</code> signals the start of a string literal</p>
 
 						</td>
+                        <td class="lines">
+89<br />
+90<br />
+91<br />
+92<br />
+93<br />
+94<br />
+95<br />
+96<br />
+97<br />
+98<br />
+99<br />
+100<br />
+101<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                if (c == STRING_LITERAL || (c == AT &amp;&amp; (char)reader.Peek() == STRING_LITERAL))
                 {
@@ -230,6 +375,18 @@ String literals and comments are aggregated into single tokens.</p>
 							<p><code>&lsquo;</code> signals the start of a character literal</p>
 
 						</td>
+                        <td class="lines">
+102<br />
+103<br />
+104<br />
+105<br />
+106<br />
+107<br />
+108<br />
+109<br />
+110<br />
+111<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                if (c == CHAR_LITERAL)
                 {
@@ -251,6 +408,18 @@ String literals and comments are aggregated into single tokens.</p>
 							<p><code>/*</code> signals the start of a multiline comment</p>
 
 						</td>
+                        <td class="lines">
+112<br />
+113<br />
+114<br />
+115<br />
+116<br />
+117<br />
+118<br />
+119<br />
+120<br />
+121<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                if (c == FORWARDSLASH &amp;&amp; (char)reader.Peek() == SPLAT)
                 {
@@ -272,6 +441,23 @@ String literals and comments are aggregated into single tokens.</p>
 							<p><code>//</code> signals the start of a line comment</p>
 
 						</td>
+                        <td class="lines">
+122<br />
+123<br />
+124<br />
+125<br />
+126<br />
+127<br />
+128<br />
+129<br />
+130<br />
+131<br />
+132<br />
+133<br />
+134<br />
+135<br />
+136<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                if (c == FORWARDSLASH &amp;&amp; (char)reader.Peek() == FORWARDSLASH)
                 {
@@ -298,6 +484,24 @@ String literals and comments are aggregated into single tokens.</p>
 							<p>These characters are necessary to successfully parse type names later on.</p>
 
 						</td>
+                        <td class="lines">
+137<br />
+138<br />
+139<br />
+140<br />
+141<br />
+142<br />
+143<br />
+144<br />
+145<br />
+146<br />
+147<br />
+148<br />
+149<br />
+150<br />
+151<br />
+152<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                if (c == BLOCK_BEGIN ||
                     c == BLOCK_END ||
@@ -325,6 +529,18 @@ String literals and comments are aggregated into single tokens.</p>
 							<p>Making a word</p>
 
 						</td>
+                        <td class="lines">
+153<br />
+154<br />
+155<br />
+156<br />
+157<br />
+158<br />
+159<br />
+160<br />
+161<br />
+162<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                token.Append(c);
             }
@@ -347,6 +563,27 @@ String literals and comments are aggregated into single tokens.</p>
 both comment and source lines via events.</p>
 
 						</td>
+                        <td class="lines">
+164<br />
+165<br />
+166<br />
+167<br />
+168<br />
+169<br />
+170<br />
+171<br />
+172<br />
+173<br />
+174<br />
+175<br />
+176<br />
+177<br />
+178<br />
+179<br />
+180<br />
+181<br />
+182<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>    public class FileParser
     {
@@ -365,7 +602,6 @@ both comment and source lines via events.</p>
             using (StreamReader reader = new StreamReader(path))
             {
                 bool iscomment = false;
-                string lasttoken = null;
 
 </code></pre>
 						</td>
@@ -378,6 +614,20 @@ both comment and source lines via events.</p>
 							<p>Helper: get the next token and raise event if it&rsquo;s a newline.</p>
 
 						</td>
+                        <td class="lines">
+183<br />
+184<br />
+185<br />
+186<br />
+187<br />
+188<br />
+189<br />
+190<br />
+191<br />
+192<br />
+193<br />
+194<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                Func&lt;string&gt; next = new Func&lt;string&gt;(() =&gt;
                 {
@@ -401,6 +651,18 @@ both comment and source lines via events.</p>
 							<p>Helper: emit a multiline token</p>
 
 						</td>
+                        <td class="lines">
+195<br />
+196<br />
+197<br />
+198<br />
+199<br />
+200<br />
+201<br />
+202<br />
+203<br />
+204<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                Action&lt;string&gt; emitMultilineToken = new Action&lt;string&gt;((string token) =&gt;
                 {
@@ -422,6 +684,17 @@ both comment and source lines via events.</p>
 							<p>Helper: move to last newline</p>
 
 						</td>
+                        <td class="lines">
+205<br />
+206<br />
+207<br />
+208<br />
+209<br />
+210<br />
+211<br />
+212<br />
+213<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                Action skipNewlines = new Action(() =&gt;
                 {
@@ -442,6 +715,27 @@ both comment and source lines via events.</p>
 							<p>Helper: move past block as designated by opening and closing strings. Return the block as a string.</p>
 
 						</td>
+                        <td class="lines">
+214<br />
+215<br />
+216<br />
+217<br />
+218<br />
+219<br />
+220<br />
+221<br />
+222<br />
+223<br />
+224<br />
+225<br />
+226<br />
+227<br />
+228<br />
+229<br />
+230<br />
+231<br />
+232<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                Func&lt;string, string, string&gt; skipBlock = new Func&lt;string, string, string&gt;((open, close) =&gt;
                 {
@@ -472,6 +766,18 @@ both comment and source lines via events.</p>
 							<p>Helper: move past generic decl block</p>
 
 						</td>
+                        <td class="lines">
+233<br />
+234<br />
+235<br />
+236<br />
+237<br />
+238<br />
+239<br />
+240<br />
+241<br />
+242<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                Func&lt;string&gt; skipGeneric = new Func&lt;string&gt;(() =&gt;
                 {
@@ -493,6 +799,55 @@ both comment and source lines via events.</p>
 							<p>Helper: return the next token plus any possible generic portion</p>
 
 						</td>
+                        <td class="lines">
+243<br />
+244<br />
+245<br />
+246<br />
+247<br />
+248<br />
+249<br />
+250<br />
+251<br />
+252<br />
+253<br />
+254<br />
+255<br />
+256<br />
+257<br />
+258<br />
+259<br />
+260<br />
+261<br />
+262<br />
+263<br />
+264<br />
+265<br />
+266<br />
+267<br />
+268<br />
+269<br />
+270<br />
+271<br />
+272<br />
+273<br />
+274<br />
+275<br />
+276<br />
+277<br />
+278<br />
+279<br />
+280<br />
+281<br />
+282<br />
+283<br />
+284<br />
+285<br />
+286<br />
+287<br />
+288<br />
+289<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                Func&lt;string&gt; typeName = new Func&lt;string&gt;(() =&gt;
                 {
@@ -551,6 +906,17 @@ both comment and source lines via events.</p>
 							<p>Indicates anonymous delegate</p>
 
 						</td>
+                        <td class="lines">
+290<br />
+291<br />
+292<br />
+293<br />
+294<br />
+295<br />
+296<br />
+297<br />
+298<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                                break;
                             }
@@ -571,6 +937,28 @@ both comment and source lines via events.</p>
 							<p>Indicates generic constraint</p>
 
 						</td>
+                        <td class="lines">
+299<br />
+300<br />
+301<br />
+302<br />
+303<br />
+304<br />
+305<br />
+306<br />
+307<br />
+308<br />
+309<br />
+310<br />
+311<br />
+312<br />
+313<br />
+314<br />
+315<br />
+316<br />
+317<br />
+318<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                                break;
                             }
@@ -602,6 +990,30 @@ both comment and source lines via events.</p>
 							<p>Emit either a comment or code line.</p>
 
 						</td>
+                        <td class="lines">
+319<br />
+320<br />
+321<br />
+322<br />
+323<br />
+324<br />
+325<br />
+326<br />
+327<br />
+328<br />
+329<br />
+330<br />
+331<br />
+332<br />
+333<br />
+334<br />
+335<br />
+336<br />
+337<br />
+338<br />
+339<br />
+340<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        protected void OnEmitLine(string line, bool iscomment)
         {

@@ -1,4 +1,4 @@
-# Curtsy #
+![Curtsy](https://s3.amazonaws.com/brandonc-img/curtsy.png)
 
 > A hyperlinked, readable, c#-to-annotated-html documentation generator.
 

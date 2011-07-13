@@ -9,42 +9,74 @@
 <body onload="prettyPrint()">
 	<div id="container">
 		<div id="background"></div>
-			<div id="jump_to">
-				Jump To &hellip;
-				<div id="jump_wrapper">
-					<div id="jump_page">
-							<a class="source" href="explain.html">
-								Explain.cs
-							</a>
-							<a class="source" href="extensions/stringregexextensions.html">
-								Extensions\StringRegexExtensions.cs
-							</a>
-							<a class="source" href="parser,lexer.html">
-								Parser,Lexer.cs
-							</a>
-							<a class="source" href="pathhelper.html">
-								PathHelper.cs
-							</a>
-							<a class="source" href="program.html">
-								Program.cs
-							</a>
-							<a class="source" href="properties/assemblyinfo.html">
-								Properties\AssemblyInfo.cs
-							</a>
-							<a class="source" href="embeddedresources.html">
-								EmbeddedResources.cs
-							</a>
-							<a class="source" href="section.html">
-								Section.cs
-							</a>
-							<a class="source" href="templatebase.html">
-								TemplateBase.cs
-							</a>
-							<a class="source" href="typemap.html">
-								TypeMap.cs
-							</a>
-					</div>
-				</div>
+			<div id="sources" class="dd">
+				Explain.cs
+                <div class="ddbtn"></div>
+                <header></header>
+                <nav>
+                    <table border="0" cellspacing="0">
+							<tr>
+                                <td class="size">8.92 KB</td>
+                                <td><a class="source" href="explain.html">
+								    Explain.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">37.19 KB</td>
+                                <td><a class="source" href="extensions/stringregexextensions.html">
+								    Extensions\StringRegexExtensions.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.76 KB</td>
+                                <td><a class="source" href="foundtypes.html">
+								    FoundTypes.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">12.6 KB</td>
+                                <td><a class="source" href="parser,lexer.html">
+								    Parser,Lexer.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.02 KB</td>
+                                <td><a class="source" href="pathhelper.html">
+								    PathHelper.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">3.27 KB</td>
+                                <td><a class="source" href="program.html">
+								    Program.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.46 KB</td>
+                                <td><a class="source" href="properties/assemblyinfo.html">
+								    Properties\AssemblyInfo.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">4.17 KB</td>
+                                <td><a class="source" href="embeddedresources.html">
+								    EmbeddedResources.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">645 B</td>
+                                <td><a class="source" href="section.html">
+								    Section.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.19 KB</td>
+                                <td><a class="source" href="templatebase.html">
+								    TemplateBase.cs
+							    </a></td>
+                            </tr>
+                    </table>
+				</nav>
 			</div>
 		<table cellpadding="0" cellspacing="0">
 			<thead>
@@ -52,7 +84,8 @@
 					<th class="docs">
 						<h1>Explain.cs</h1>
 					</th>
-					<th class="code"></th>
+                    <th class="lines"></th>
+					<th class="code">&nbsp;</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -80,6 +113,24 @@
 <p><small>* nocco is a port of <a href="http://jashkenas.github.com/docco/">docco</a>!</small></p>
 
 						</td>
+                        <td class="lines">
+26<br />
+27<br />
+28<br />
+29<br />
+30<br />
+31<br />
+32<br />
+33<br />
+34<br />
+35<br />
+36<br />
+37<br />
+38<br />
+39<br />
+40<br />
+41<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>using System;
 using System.Collections.Generic;
@@ -92,19 +143,108 @@ namespace Explain
 {
     public class Explain
     {
-        class OutputUnit
-        {
-            public string CodeFile;
-            public List&lt;Section&gt; Sections;
-        }
-
         public List&lt;string&gt; Sources { get; set; }
         public <a href="pathhelper.html">PathHelper</a> RootPathHelper { get; set; }
         public <a href="embeddedresources.html">EmbeddedResources</a> Resources { get; set; }
 
-        public void Generate(string destinationDirectory)
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_2">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_2">&#182;</a>
+							</div>
+							<p>Generates html documents and writes them to the specified destination directory.</p>
+
+						</td>
+                        <td class="lines">
+42<br />
+43<br />
+44<br />
+45<br />
+46<br />
+47<br />
+48<br />
+49<br />
+50<br />
+51<br />
+52<br />
+53<br />
+54<br />
+55<br />
+56<br />
+57<br />
+58<br />
+59<br />
+60<br />
+61<br />
+62<br />
+63<br />
+64<br />
+65<br />
+66<br />
+67<br />
+68<br />
+69<br />
+70<br />
+71<br />
+72<br />
+73<br />
+74<br />
+75<br />
+76<br />
+77<br />
+78<br />
+79<br />
+80<br />
+81<br />
+82<br />
+83<br />
+84<br />
+85<br />
+86<br />
+87<br />
+88<br />
+89<br />
+90<br />
+91<br />
+92<br />
+93<br />
+94<br />
+95<br />
+96<br />
+97<br />
+98<br />
+99<br />
+100<br />
+101<br />
+102<br />
+103<br />
+104<br />
+105<br />
+106<br />
+107<br />
+108<br />
+109<br />
+110<br />
+111<br />
+112<br />
+113<br />
+114<br />
+115<br />
+116<br />
+117<br />
+118<br />
+119<br />
+120<br />
+121<br />
+122<br />
+                        </td>
+						<td class="code">
+							<pre><code class='prettyprint'>        public void Generate(string destinationDirectory)
         {
-            <a href="typemap.html">FoundTypes</a> typeMap = new <a href="typemap.html">FoundTypes</a>();
+            <a href="foundtypes.html">FoundTypes</a> typeMap = new <a href="foundtypes.html">FoundTypes</a>();
             List&lt;OutputUnit&gt; output = new List&lt;OutputUnit&gt;();
 
             foreach (string codefile in this.Sources)
@@ -114,50 +254,63 @@ namespace Explain
                 var docsText = new StringBuilder();
                 var codeText = new StringBuilder();
 
-                Action&lt;string, string&gt; save = (string docs, string code) =&gt; sections.Add(new <a href="section.html">Section</a>() { DocsHtml = docs, CodeHtml = code });
+                Action&lt;string, string, int, int, int&gt; save = (string docs, string code, int codeStartLine, int s, int e) =&gt;
+                {
+                    sections.Add(new <a href="section.html">Section</a>() { DocsHtml = docs, CodeHtml = code, CodeStartLine = codeStartLine, StartLine = s, EndLine = e });
+                };
+
+                int? codeStart = null;
+                int? start = null;
+                int? end = null;
 
                 <a href="parser,lexer.html">FileParser</a> parser = new <a href="parser,lexer.html">FileParser</a>(codefile, typeMap, this.RootPathHelper);
                 parser.EmitCommentLine += delegate(string line, int sourceLineNumber)
                 {
-</code></pre>
-						</td>
-					</tr>
-					<tr id="section_2">
-						<td class="docs">
-							<div class="pilwrap">
-								<a class="pilcrow" href="#section_2">&#182;</a>
-							</div>
-							<p>Throw away intellisense documentation. It doesn&rsquo;t markdown well at all.</p>
-
-						</td>
-						<td class="code">
-							<pre><code class='prettyprint'>                    if (line.TrimStart(&#39; &#39;, &#39;\t&#39;).StartsWith(&quot;///&quot;))
-                        return;
+                    if (!start.HasValue)
+                        start = sourceLineNumber;
 
                     if (hasCode)
                     {
-                        save(docsText.ToString(), codeText.ToString());
+                        end = sourceLineNumber;
+
+                        save(docsText.ToString(), codeText.ToString(), codeStart.HasValue ? codeStart.Value : 1, start.Value, end.Value);
                         docsText.Clear();
                         codeText.Clear();
                         hasCode = false;
+                        codeStart = start = end = null;
+                    } else
+                    {
+                        end = sourceLineNumber;
                     }
+
+                    if (line.TrimStart(&#39; &#39;, &#39;\t&#39;).StartsWith(&quot;///&quot;))
+                        return; // Throw away intellisense documentation. It doesn&#39;t markdown well at all.
 
                     docsText.AppendLine(line.TrimStart(&#39; &#39;, &#39;\t&#39;, &#39;/&#39;, &#39;*&#39;));
                 };
 
                 parser.EmitLine += delegate(string line, int sourceLineNumber)
                 {
+                    if (!codeStart.HasValue)
+                        codeStart = sourceLineNumber;
+
+                    if (!start.HasValue)
+                        start = sourceLineNumber;
+
+                    end = sourceLineNumber;
                     codeText.AppendLine(line);
                     hasCode = true;
                 };
 
                 parser.Parse();
-                save(docsText.ToString(), codeText.ToString());
+                save(docsText.ToString(), codeText.ToString(), codeStart.HasValue ? codeStart.Value : 0, start.Value, end.Value);
 
-                output.Add(new OutputUnit()
+                output.Add(new <a href="section.html">OutputUnit</a>()
                 {
                     Sections = sections,
-                    CodeFile = codefile
+                    CodeFile = codefile,
+                    Name = RootPathHelper.MakeRelativePath(codefile),
+                    SizeFormatted = GetFileSizeFormatted(codefile)
                 });
             }
 
@@ -165,7 +318,7 @@ namespace Explain
 
             foreach (var v in output)
             {
-                GenerateInternal(v.Sections, this.Sources.ToArray(), v.CodeFile, typeMap, destinationDirectory);
+                GenerateInternal(v.Sections, output, v.CodeFile, typeMap, destinationDirectory);
             }
         }
 
@@ -177,15 +330,116 @@ namespace Explain
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_3">&#182;</a>
 							</div>
-							<p>Prepare sections for html output and execute razor template</p>
+							<p>For the specified file, create a formatted text string describing the
+length of the file using these units:</p>
 
 						</td>
+                        <td class="lines">
+124<br />
+125<br />
+126<br />
+127<br />
+128<br />
+129<br />
+130<br />
+131<br />
+132<br />
+133<br />
+134<br />
+135<br />
+136<br />
+137<br />
+138<br />
+139<br />
+                        </td>
 						<td class="code">
-							<pre><code class='prettyprint'>        void GenerateInternal(List&lt;Section&gt; sections, string[] sources, string codefile, <a href="typemap.html">FoundTypes</a> typeMap, string destinationDirectory)
+							<pre><code class='prettyprint'>        static string[] sizes = { &quot;B&quot;, &quot;KB&quot;, &quot;MB&quot;, &quot;GB&quot; };
+
+        string GetFileSizeFormatted(string path)
+        {
+            int order = 0;
+            double len = new FileInfo(path).Length;
+            while (len &gt;= 1024 &amp;&amp; order + 1 &lt; len)
+            {
+                order++;
+                len = len / 1024;
+            }
+
+            return String.Format(&quot;{0:0.##} {1}&quot;, len, sizes[order]);
+        }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_4">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_4">&#182;</a>
+							</div>
+							<p>Write the output for each file into the specified destination directory
+and prepare the razor template instance with the data it needs.</p>
+
+						</td>
+                        <td class="lines">
+141<br />
+142<br />
+143<br />
+144<br />
+145<br />
+146<br />
+147<br />
+148<br />
+149<br />
+150<br />
+151<br />
+152<br />
+153<br />
+154<br />
+155<br />
+156<br />
+157<br />
+158<br />
+159<br />
+160<br />
+161<br />
+162<br />
+163<br />
+164<br />
+165<br />
+166<br />
+167<br />
+168<br />
+169<br />
+170<br />
+171<br />
+172<br />
+173<br />
+174<br />
+175<br />
+176<br />
+177<br />
+178<br />
+179<br />
+180<br />
+181<br />
+182<br />
+183<br />
+184<br />
+185<br />
+186<br />
+187<br />
+188<br />
+189<br />
+190<br />
+191<br />
+192<br />
+                        </td>
+						<td class="code">
+							<pre><code class='prettyprint'>        void GenerateInternal(List&lt;Section&gt; sections, List&lt;OutputUnit&gt; sources, string codefile, <a href="foundtypes.html">FoundTypes</a> typeMap, string destinationDirectory)
         {
             var output = this.RootPathHelper.MakeRelativePath(codefile);
             var subdestination = Path.Combine(destinationDirectory, output);
-            Directory.CreateDirectory(Path.GetDirectoryName(subdestination));
+            Directory.CreateDirectory(Path.GetDirectoryName(subdestination).ToLower());
 
             string clientPathToRoot = String.Concat(Enumerable.Repeat&lt;string&gt;(&quot;../&quot;, output.Split(Path.DirectorySeparatorChar).Length - 1));
 
@@ -225,27 +479,53 @@ namespace Explain
             htmlTemplate.GetResourcePath = (string s) =&gt; Path.Combine(clientPathToRoot, s);
             htmlTemplate.GetSourcePath = getSourcePath;
             htmlTemplate.Sections = sections;
-            htmlTemplate.Sources = new List&lt;string&gt;(from f in sources
-                                                    select RootPathHelper.MakeRelativePath(f));
+            htmlTemplate.Sources = sources;
 
             htmlTemplate.Execute();
+
+            File.WriteAllText(Path.ChangeExtension(subdestination, &quot;.html&quot;).ToLower(), htmlTemplate.Buffer.ToString()); // Overwrites existing file
+        }
 
 </code></pre>
 						</td>
 					</tr>
-					<tr id="section_4">
+					<tr id="section_5">
 						<td class="docs">
 							<div class="pilwrap">
-								<a class="pilcrow" href="#section_4">&#182;</a>
+								<a class="pilcrow" href="#section_5">&#182;</a>
 							</div>
-							<p>Overwrite existing file</p>
+							<p>Create a new instance of the Explain engine. You have to specify the individual files to be used as well
+as the root directory from which to resolve them and write the output &ldquo;docs&rdquo; folder</p>
 
 						</td>
+                        <td class="lines">
+194<br />
+195<br />
+196<br />
+197<br />
+198<br />
+199<br />
+200<br />
+201<br />
+202<br />
+203<br />
+204<br />
+205<br />
+206<br />
+207<br />
+208<br />
+209<br />
+210<br />
+211<br />
+212<br />
+213<br />
+214<br />
+215<br />
+216<br />
+217<br />
+                        </td>
 						<td class="code">
-							<pre><code class='prettyprint'>            File.WriteAllText(Path.ChangeExtension(subdestination, &quot;.html&quot;).ToLower(), htmlTemplate.Buffer.ToString());
-        }
-
-        public Explain(List&lt;string&gt; sources, string rootDirectory)
+							<pre><code class='prettyprint'>        public Explain(List&lt;string&gt; sources, string rootDirectory)
         {
             if (string.IsNullOrEmpty(rootDirectory))
                 rootDirectory = &quot;.\\&quot;;

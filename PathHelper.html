@@ -9,42 +9,74 @@
 <body onload="prettyPrint()">
 	<div id="container">
 		<div id="background"></div>
-			<div id="jump_to">
-				Jump To &hellip;
-				<div id="jump_wrapper">
-					<div id="jump_page">
-							<a class="source" href="explain.html">
-								Explain.cs
-							</a>
-							<a class="source" href="extensions/stringregexextensions.html">
-								Extensions\StringRegexExtensions.cs
-							</a>
-							<a class="source" href="parser,lexer.html">
-								Parser,Lexer.cs
-							</a>
-							<a class="source" href="pathhelper.html">
-								PathHelper.cs
-							</a>
-							<a class="source" href="program.html">
-								Program.cs
-							</a>
-							<a class="source" href="properties/assemblyinfo.html">
-								Properties\AssemblyInfo.cs
-							</a>
-							<a class="source" href="embeddedresources.html">
-								EmbeddedResources.cs
-							</a>
-							<a class="source" href="section.html">
-								Section.cs
-							</a>
-							<a class="source" href="templatebase.html">
-								TemplateBase.cs
-							</a>
-							<a class="source" href="typemap.html">
-								TypeMap.cs
-							</a>
-					</div>
-				</div>
+			<div id="sources" class="dd">
+				PathHelper.cs
+                <div class="ddbtn"></div>
+                <header></header>
+                <nav>
+                    <table border="0" cellspacing="0">
+							<tr>
+                                <td class="size">8.92 KB</td>
+                                <td><a class="source" href="explain.html">
+								    Explain.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">37.19 KB</td>
+                                <td><a class="source" href="extensions/stringregexextensions.html">
+								    Extensions\StringRegexExtensions.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.76 KB</td>
+                                <td><a class="source" href="foundtypes.html">
+								    FoundTypes.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">12.6 KB</td>
+                                <td><a class="source" href="parser,lexer.html">
+								    Parser,Lexer.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.02 KB</td>
+                                <td><a class="source" href="pathhelper.html">
+								    PathHelper.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">3.27 KB</td>
+                                <td><a class="source" href="program.html">
+								    Program.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.46 KB</td>
+                                <td><a class="source" href="properties/assemblyinfo.html">
+								    Properties\AssemblyInfo.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">4.17 KB</td>
+                                <td><a class="source" href="embeddedresources.html">
+								    EmbeddedResources.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">645 B</td>
+                                <td><a class="source" href="section.html">
+								    Section.cs
+							    </a></td>
+                            </tr>
+							<tr>
+                                <td class="size">1.19 KB</td>
+                                <td><a class="source" href="templatebase.html">
+								    TemplateBase.cs
+							    </a></td>
+                            </tr>
+                    </table>
+				</nav>
 			</div>
 		<table cellpadding="0" cellspacing="0">
 			<thead>
@@ -52,7 +84,8 @@
 					<th class="docs">
 						<h1>PathHelper.cs</h1>
 					</th>
-					<th class="code"></th>
+                    <th class="lines"></th>
+					<th class="code">&nbsp;</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -63,6 +96,17 @@
 							</div>
 							
 						</td>
+                        <td class="lines">
+1<br />
+2<br />
+3<br />
+4<br />
+5<br />
+6<br />
+7<br />
+8<br />
+9<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>using System;
 using System.Collections.Generic;
@@ -80,9 +124,35 @@ namespace Explain
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_2">&#182;</a>
 							</div>
-							<p>PathHelper is initialized with a root directory and can make other paths relative to it.</p>
+							<p>PathHelper is a helper class that accepts a root directory
+and can produce relative paths to that directory given another path.</p>
 
 						</td>
+                        <td class="lines">
+11<br />
+12<br />
+13<br />
+14<br />
+15<br />
+16<br />
+17<br />
+18<br />
+19<br />
+20<br />
+21<br />
+22<br />
+23<br />
+24<br />
+25<br />
+26<br />
+27<br />
+28<br />
+29<br />
+30<br />
+31<br />
+32<br />
+33<br />
+                        </td>
 						<td class="code">
 							<pre><code class='prettyprint'>    public class PathHelper
     {
@@ -102,7 +172,7 @@ namespace Explain
         {
             if (String.IsNullOrEmpty(rootPath)) throw new ArgumentNullException(&quot;absoluteTargetPath&quot;);
 
-            RootPath = rootPath;
+            RootPath = rootPath.EndsWith(Path.DirectorySeparatorChar.ToString()) ? rootPath : rootPath + Path.DirectorySeparatorChar;
         }
     }
 }

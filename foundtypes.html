@@ -1,7 +1,7 @@
 <!DOCTYPE html />
 <html>
 <head>
-	<title>TemplateBase.cs</title>
+	<title>FoundTypes.cs</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<link href="explain.css" rel="stylesheet" media="all" type="text/css" />
 	<script src="prettify.js" type="text/javascript"></script>
@@ -10,7 +10,7 @@
 	<div id="container">
 		<div id="background"></div>
 			<div id="sources" class="dd">
-				TemplateBase.cs
+				FoundTypes.cs
                 <div class="ddbtn"></div>
                 <header></header>
                 <nav>
@@ -82,7 +82,7 @@
 			<thead>
 				<tr>
 					<th class="docs">
-						<h1>TemplateBase.cs</h1>
+						<h1>FoundTypes.cs</h1>
 					</th>
                     <th class="lines"></th>
 					<th class="code">&nbsp;</th>
@@ -103,11 +103,17 @@
 4<br />
 5<br />
 6<br />
+7<br />
+8<br />
+9<br />
                         </td>
 						<td class="code">
-							<pre><code class='prettyprint'>using System.Text;
+							<pre><code class='prettyprint'>using System;
 using System.Collections.Generic;
-using System;
+using System.Linq;
+using System.Text;
+using System.Collections;
+
 namespace Explain
 {
 </code></pre>
@@ -118,13 +124,10 @@ namespace Explain
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_2">&#182;</a>
 							</div>
-							<p>TemplateBase serves as the base class for the object that will generated
-by compiling the embedded razor template. The template itself will use the
-public members to render its contents.</p>
+							<p>Maintains meta data about types encountered during the parsing process.</p>
 
 						</td>
                         <td class="lines">
-9<br />
 10<br />
 11<br />
 12<br />
@@ -140,36 +143,7 @@ public members to render its contents.</p>
 22<br />
 23<br />
 24<br />
-                        </td>
-						<td class="code">
-							<pre><code class='prettyprint'>    public abstract class TemplateBase
-    {
-        public string Title { get; set; }
-        public Func&lt;string, string&gt; GetResourcePath { get; set; }
-        public Func&lt;string, string&gt; GetSourcePath { get; set; }
-        public List&lt;Section&gt; Sections { get; set; }
-        public List&lt;OutputUnit&gt; Sources { get; set; }
-
-        public StringBuilder Buffer { get; set; }
-
-        public TemplateBase()
-        {
-            Buffer = new StringBuilder();
-        }
-
-</code></pre>
-						</td>
-					</tr>
-					<tr id="section_3">
-						<td class="docs">
-							<div class="pilwrap">
-								<a class="pilcrow" href="#section_3">&#182;</a>
-							</div>
-							<p>This <code>Execute</code> function will be defined in the inheriting template
-class. It generates the HTML by calling <code>Write</code> and <code>WriteLiteral</code>.</p>
-
-						</td>
-                        <td class="lines">
+25<br />
 26<br />
 27<br />
 28<br />
@@ -180,24 +154,86 @@ class. It generates the HTML by calling <code>Write</code> and <code>WriteLitera
 33<br />
 34<br />
 35<br />
-36<br />
-37<br />
-38<br />
                         </td>
 						<td class="code">
-							<pre><code class='prettyprint'>        public abstract void Execute();
-
-        public virtual void Write(object value)
-        {
-            WriteLiteral(value);
+							<pre><code class='prettyprint'>    public class FoundTypes : IEnumerable&lt;FoundTypes.TypeInfo&gt;
+    {
+        public class TypeInfo {
+            public string Name { get; set; }
+            public TypeHint Type { get; set; }
+            public string File { get; set; }
+            public int LineNumber { get; set; }
         }
 
-        public virtual void WriteLiteral(object value)
+        public enum TypeHint
         {
-            Buffer.Append(value);
+            Class,
+            Enum,
+            Struct,
+            Delegate,
+            Interface
+        }
+
+        Dictionary&lt;Tuple&lt;string, string&gt;, TypeInfo&gt; types;
+
+        public FoundTypes()
+        {
+            types = new Dictionary&lt;Tuple&lt;string, string&gt;, TypeInfo&gt;();
+        }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_3">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_3">&#182;</a>
+							</div>
+							<p>The combination of type name and file name is used
+as the key for the type. This is weak because technically 
+namespacing or partial classes could create a duplicate key</p>
+
+<p>To fix this, it would be necessary to maintain a stack of
+namespaces encountered during the file parsing and use that for this method</p>
+
+						</td>
+                        <td class="lines">
+41<br />
+42<br />
+43<br />
+44<br />
+45<br />
+46<br />
+47<br />
+48<br />
+49<br />
+50<br />
+51<br />
+52<br />
+53<br />
+54<br />
+55<br />
+56<br />
+57<br />
+                        </td>
+						<td class="code">
+							<pre><code class='prettyprint'>        public void Add(string name, string file, int line, TypeHint typehint)
+        {
+            types.Add(new Tuple&lt;string, string&gt;(name, file), new TypeInfo() { File = file, LineNumber = line, Name = name, Type = typehint });
+        }
+
+        IEnumerator&lt;FoundTypes.TypeInfo&gt; IEnumerable&lt;FoundTypes.TypeInfo&gt;.GetEnumerator()
+        {
+            return types.Values.ToList().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)types.Values.ToList();
         }
     }
 }
+
 </code></pre>
 						</td>
 					</tr>

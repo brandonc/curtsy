@@ -1,24 +1,24 @@
 <!DOCTYPE html />
 <html>
 <head>
-	<title>Explain.cs</title>
+	<title>Curtsy.cs</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<link href="explain.css" rel="stylesheet" media="all" type="text/css" />
+	<link href="curtsy.css" rel="stylesheet" media="all" type="text/css" />
 	<script src="prettify.js" type="text/javascript"></script>
 </head>
 <body onload="prettyPrint()">
 	<div id="container">
 		<div id="background"></div>
 			<div id="sources" class="dd">
-				Explain.cs
+				Curtsy.cs
                 <div class="ddbtn"></div>
                 <header></header>
                 <nav>
                     <table border="0" cellspacing="0">
 							<tr>
-                                <td class="size">8.92 KB</td>
-                                <td><a class="source" href="explain.html">
-								    Explain.cs
+                                <td class="size">8.91 KB</td>
+                                <td><a class="source" href="curtsy.html">
+								    Curtsy.cs
 							    </a></td>
                             </tr>
 							<tr>
@@ -46,7 +46,7 @@
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">3.27 KB</td>
+                                <td class="size">3.26 KB</td>
                                 <td><a class="source" href="program.html">
 								    Program.cs
 							    </a></td>
@@ -58,13 +58,13 @@
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">4.17 KB</td>
+                                <td class="size">4.16 KB</td>
                                 <td><a class="source" href="embeddedresources.html">
 								    EmbeddedResources.cs
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">645 B</td>
+                                <td class="size">644 B</td>
                                 <td><a class="source" href="section.html">
 								    Section.cs
 							    </a></td>
@@ -82,7 +82,7 @@
 			<thead>
 				<tr>
 					<th class="docs">
-						<h1>Explain.cs</h1>
+						<h1>Curtsy.cs</h1>
 					</th>
                     <th class="lines"></th>
 					<th class="code">&nbsp;</th>
@@ -94,19 +94,19 @@
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_1">&#182;</a>
 							</div>
-							<h2>Explain</h2>
+							<h2>Curtsy</h2>
 <blockquote>
-<p>A hyperlinked, readable, c#-to-annotated-html documentation generator.</p>
+<p>A hyperlinked, readable, C#-to-annotated-html documentation generator.</p>
 </blockquote>
-<p>Explain is a fork of <a href="http://dontangg.github.com/nocco/">nocco</a>* that does some lexical analysis in order to provide type hyperlinking for c#.</p>
+<p>Curtsy is a fork of <a href="http://dontangg.github.com/nocco/">nocco</a>* that does some lexical analysis in order to provide type hyperlinking for c#.</p>
 
 <p>Nocco is simpler and yet can be run against more programming languages, comparatively speaking. It just doesn&rsquo;t hyperlink the source.</p>
 
-<p>This page is the result of running Explain against its own source file. The source for Explain is <a href="https://github.com/brandonc/explain">available on GitHub</a>, and released under the MIT license.</p>
+<p>This page is the result of running Curtsy against its own source file. The source for Curtsy is <a href="https://github.com/brandonc/curtsy">available on GitHub</a>, and released under the MIT license.</p>
 
-<p>You can run explain either against a <code>.csproj</code> file or against individual source files.</p>
+<p>You can run curtsy either against a <code>.csproj</code> file or against individual source files.</p>
 
-<p>Running this: <code>explain WindowsApplication1.csproj</code></p>
+<p>Running this: <code>curtsy WindowsApplication1.csproj</code></p>
 
 <p>will generate linked HTML documentation for the named source files, saving it into a new folder called &ldquo;docs&rdquo;.</p>
 
@@ -139,9 +139,9 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Explain
+namespace Curtsy
 {
-    public class Explain
+    public class Curtsy
     {
         public List&lt;string&gt; Sources { get; set; }
         public <a href="pathhelper.html">PathHelper</a> RootPathHelper { get; set; }
@@ -494,7 +494,7 @@ and prepare the razor template instance with the data it needs.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_5">&#182;</a>
 							</div>
-							<p>Create a new instance of the Explain engine. You have to specify the individual files to be used as well
+							<p>Create a new instance of the Curtsy engine. You have to specify the individual files to be used as well
 as the root directory from which to resolve them and write the output &ldquo;docs&rdquo; folder</p>
 
 						</td>
@@ -525,7 +525,7 @@ as the root directory from which to resolve them and write the output &ldquo;doc
 217<br />
                         </td>
 						<td class="code">
-							<pre><code class='prettyprint'>        public Explain(List&lt;string&gt; sources, string rootDirectory)
+							<pre><code class='prettyprint'>        public Curtsy(List&lt;string&gt; sources, string rootDirectory)
         {
             if (string.IsNullOrEmpty(rootDirectory))
                 rootDirectory = &quot;.\\&quot;;

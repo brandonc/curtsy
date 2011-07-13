@@ -22,4 +22,4 @@ This is a very early work in progress. Intellisense comments are ignored complet
 
 [docco]: http://jashkenas.github.com/docco/
 [nocco]: http://dontangg.github.com/nocco/
-[pages]: http://brandoncroft.com/explain/
+[pages]: http://brandoncroft.com/curtsy/

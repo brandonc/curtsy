@@ -220,6 +220,7 @@ h4, h5, h6 {
 table td {
   border: 0;
   outline: 0;
+  vertical-align: top;
 }
   td.docs, th.docs {
     max-width: 450px;

@@ -26,7 +26,7 @@ namespace Explain
         {
             if (String.IsNullOrEmpty(rootPath)) throw new ArgumentNullException("absoluteTargetPath");
 
-            RootPath = rootPath.EndsWith(Path.DirectorySeparatorChar) ? rootPath : rootPath + Path.DirectorySeparatorChar;
+            RootPath = rootPath.EndsWith(Path.DirectorySeparatorChar.ToString()) ? rootPath : rootPath + Path.DirectorySeparatorChar;
         }
     }
 }

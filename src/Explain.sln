@@ -7,7 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{10DF5DDF-E
 	ProjectSection(SolutionItems) = preProject
 		..\LICENSE = ..\LICENSE
 		..\Rakefile = ..\Rakefile
-		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Explain.Tests", "Explain.Tests\Explain.Tests.csproj", "{867F7B7C-70F6-4B65-8400-8BC21836827B}"

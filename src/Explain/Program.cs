@@ -20,7 +20,7 @@ namespace Explain
 
     // If the input is a csproj file, that file is probed for compilable cs files.
 
-    // [1]: explain.cs
+    // [1]: explain.html
     class Program
     {
         static FoundTypes _typeMap = new FoundTypes();

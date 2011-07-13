@@ -34,16 +34,11 @@ namespace Explain
 {
     public class Explain
     {
-        class OutputUnit
-        {
-            public string CodeFile;
-            public List<Section> Sections;
-        }
-
         public List<string> Sources { get; set; }
         public PathHelper RootPathHelper { get; set; }
         public EmbeddedResources Resources { get; set; }
 
+        // Generates html documents and writes them to the specified destination directory.
         public void Generate(string destinationDirectory)
         {
             FoundTypes typeMap = new FoundTypes();
@@ -56,39 +51,63 @@ namespace Explain
                 var docsText = new StringBuilder();
                 var codeText = new StringBuilder();
 
-                Action<string, string> save = (string docs, string code) => sections.Add(new Section() { DocsHtml = docs, CodeHtml = code });
+                Action<string, string, int, int, int> save = (string docs, string code, int codeStartLine, int s, int e) =>
+                {
+                    sections.Add(new Section() { DocsHtml = docs, CodeHtml = code, CodeStartLine = codeStartLine, StartLine = s, EndLine = e });
+                };
+
+                int? codeStart = null;
+                int? start = null;
+                int? end = null;
 
                 FileParser parser = new FileParser(codefile, typeMap, this.RootPathHelper);
                 parser.EmitCommentLine += delegate(string line, int sourceLineNumber)
                 {
-                    // Throw away intellisense documentation. It doesn't markdown well at all.
-                    if (line.TrimStart(' ', '\t').StartsWith("///"))
-                        return;
+                    if (!start.HasValue)
+                        start = sourceLineNumber;
 
                     if (hasCode)
                     {
-                        save(docsText.ToString(), codeText.ToString());
+                        end = sourceLineNumber;
+
+                        save(docsText.ToString(), codeText.ToString(), codeStart.HasValue ? codeStart.Value : 1, start.Value, end.Value);
                         docsText.Clear();
                         codeText.Clear();
                         hasCode = false;
+                        codeStart = start = end = null;
+                    } else
+                    {
+                        end = sourceLineNumber;
                     }
+
+                    if (line.TrimStart(' ', '\t').StartsWith("///"))
+                        return; // Throw away intellisense documentation. It doesn't markdown well at all.
 
                     docsText.AppendLine(line.TrimStart(' ', '\t', '/', '*'));
                 };
 
                 parser.EmitLine += delegate(string line, int sourceLineNumber)
                 {
+                    if (!codeStart.HasValue)
+                        codeStart = sourceLineNumber;
+
+                    if (!start.HasValue)
+                        start = sourceLineNumber;
+
+                    end = sourceLineNumber;
                     codeText.AppendLine(line);
                     hasCode = true;
                 };
 
                 parser.Parse();
-                save(docsText.ToString(), codeText.ToString());
+                save(docsText.ToString(), codeText.ToString(), codeStart.HasValue ? codeStart.Value : 0, start.Value, end.Value);
 
                 output.Add(new OutputUnit()
                 {
                     Sections = sections,
-                    CodeFile = codefile
+                    CodeFile = codefile,
+                    Name = RootPathHelper.MakeRelativePath(codefile),
+                    SizeFormatted = GetFileSizeFormatted(codefile)
                 });
             }
 
@@ -96,16 +115,34 @@ namespace Explain
 
             foreach (var v in output)
             {
-                GenerateInternal(v.Sections, this.Sources.ToArray(), v.CodeFile, typeMap, destinationDirectory);
+                GenerateInternal(v.Sections, output, v.CodeFile, typeMap, destinationDirectory);
             }
         }
 
-        // Prepare sections for html output and execute razor template
-        void GenerateInternal(List<Section> sections, string[] sources, string codefile, FoundTypes typeMap, string destinationDirectory)
+        // For the specified file, create a formatted text string describing the
+        // length of the file using these units:
+        static string[] sizes = { "B", "KB", "MB", "GB" };
+
+        string GetFileSizeFormatted(string path)
+        {
+            int order = 0;
+            double len = new FileInfo(path).Length;
+            while (len >= 1024 && order + 1 < len)
+            {
+                order++;
+                len = len / 1024;
+            }
+
+            return String.Format("{0:0.##} {1}", len, sizes[order]);
+        }
+
+        // Write the output for each file into the specified destination directory
+        // and prepare the razor template instance with the data it needs.
+        void GenerateInternal(List<Section> sections, List<OutputUnit> sources, string codefile, FoundTypes typeMap, string destinationDirectory)
         {
             var output = this.RootPathHelper.MakeRelativePath(codefile);
             var subdestination = Path.Combine(destinationDirectory, output);
-            Directory.CreateDirectory(Path.GetDirectoryName(subdestination));
+            Directory.CreateDirectory(Path.GetDirectoryName(subdestination).ToLower());
 
             string clientPathToRoot = String.Concat(Enumerable.Repeat<string>("../", output.Split(Path.DirectorySeparatorChar).Length - 1));
 
@@ -145,15 +182,15 @@ namespace Explain
             htmlTemplate.GetResourcePath = (string s) => Path.Combine(clientPathToRoot, s);
             htmlTemplate.GetSourcePath = getSourcePath;
             htmlTemplate.Sections = sections;
-            htmlTemplate.Sources = new List<string>(from f in sources
-                                                    select RootPathHelper.MakeRelativePath(f));
+            htmlTemplate.Sources = sources;
 
             htmlTemplate.Execute();
 
-            // Overwrite existing file
-            File.WriteAllText(Path.ChangeExtension(subdestination, ".html").ToLower(), htmlTemplate.Buffer.ToString());
+            File.WriteAllText(Path.ChangeExtension(subdestination, ".html").ToLower(), htmlTemplate.Buffer.ToString()); // Overwrites existing file
         }
 
+        // Create a new instance of the Explain engine. You have to specify the individual files to be used as well
+        // as the root directory from which to resolve them and write the output "docs" folder
         public Explain(List<string> sources, string rootDirectory)
         {
             if (string.IsNullOrEmpty(rootDirectory))

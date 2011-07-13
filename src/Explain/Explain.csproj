@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Explain.cs" />
     <Compile Include="Extensions\StringRegexExtensions.cs" />
+    <Compile Include="FoundTypes.cs" />
     <Compile Include="Parser,Lexer.cs" />
     <Compile Include="PathHelper.cs" />
     <Compile Include="Program.cs" />
@@ -62,7 +63,6 @@
     <Compile Include="EmbeddedResources.cs" />
     <Compile Include="Section.cs" />
     <Compile Include="TemplateBase.cs" />
-    <Compile Include="TypeMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\explain.cshtml" />

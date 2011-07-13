@@ -10,17 +10,22 @@
 	<div id="container">
 		<div id="background"></div>
 		@if (@Sources.Count > 1) {
-			<div id="jump_to">
-				Jump To &hellip;
-				<div id="jump_wrapper">
-					<div id="jump_page">
-						@for (var i = 0; i < Sources.Count; i++) {
-							<a class="source" href="@GetSourcePath(Sources[i])">
-								@Sources[i]
-							</a>
+			<div id="sources" class="dd">
+				@Title
+                <div class="ddbtn"></div>
+                <header></header>
+                <nav>
+                    <table border="0" cellspacing="0">
+                        @for (var i = 0; i < Sources.Count; i++) {
+							<tr>
+                                <td class="size">@Sources[i].SizeFormatted</td>
+                                <td><a class="source" href="@GetSourcePath(Sources[i].Name)">
+								    @Sources[i].Name
+							    </a></td>
+                            </tr>
 						}
-					</div>
-				</div>
+                    </table>
+				</nav>
 			</div>
 		}
 		<table cellpadding="0" cellspacing="0">
@@ -28,19 +33,6 @@
 				<tr>
 					<th class="docs">
 						<h1>@Title</h1>
-                        @if (@Sources.Count > 1) {
-			                <div id="sources">
-					            <nav>
-                                    <ul>
-						            @for (var i = 0; i < Sources.Count; i++) {
-							            <li><a href="@GetSourcePath(Sources[i])">
-								            @Sources[i]
-							            </a></li>
-                                    }
-                                    </ul>
-					            </div>
-				            </div>
-                        }
 					</th>
                     <th class="lines"></th>
 					<th class="code">&nbsp;</th>

@@ -34,12 +34,6 @@ namespace Explain
 {
     public class Explain
     {
-        class OutputUnit
-        {
-            public string CodeFile;
-            public List<Section> Sections;
-        }
-
         public List<string> Sources { get; set; }
         public PathHelper RootPathHelper { get; set; }
         public EmbeddedResources Resources { get; set; }
@@ -48,6 +42,8 @@ namespace Explain
         {
             FoundTypes typeMap = new FoundTypes();
             List<OutputUnit> output = new List<OutputUnit>();
+
+            string[] sizes = { "B", "KB", "MB", "GB" };
 
             foreach (string codefile in this.Sources)
             {
@@ -107,10 +103,20 @@ namespace Explain
                 parser.Parse();
                 save(docsText.ToString(), codeText.ToString(), codeStart.HasValue ? codeStart.Value : 0, start.Value, end.Value);
 
+                int order = 0;
+                double len = new FileInfo(codefile).Length;
+                while (len >= 1024 && order + 1 < len)
+                {
+                    order++;
+                    len = len / 1024;
+                }
+
                 output.Add(new OutputUnit()
                 {
                     Sections = sections,
-                    CodeFile = codefile
+                    CodeFile = codefile,
+                    Name = RootPathHelper.MakeRelativePath(codefile),
+                    SizeFormatted = String.Format("{0:0.##} {1}", len, sizes[order])
                 });
             }
 
@@ -118,12 +124,12 @@ namespace Explain
 
             foreach (var v in output)
             {
-                GenerateInternal(v.Sections, this.Sources.ToArray(), v.CodeFile, typeMap, destinationDirectory);
+                GenerateInternal(v.Sections, output, v.CodeFile, typeMap, destinationDirectory);
             }
         }
 
         // Prepare sections for html output and execute razor template
-        void GenerateInternal(List<Section> sections, string[] sources, string codefile, FoundTypes typeMap, string destinationDirectory)
+        void GenerateInternal(List<Section> sections, List<OutputUnit> sources, string codefile, FoundTypes typeMap, string destinationDirectory)
         {
             var output = this.RootPathHelper.MakeRelativePath(codefile);
             var subdestination = Path.Combine(destinationDirectory, output);
@@ -167,8 +173,7 @@ namespace Explain
             htmlTemplate.GetResourcePath = (string s) => Path.Combine(clientPathToRoot, s);
             htmlTemplate.GetSourcePath = getSourcePath;
             htmlTemplate.Sections = sections;
-            htmlTemplate.Sources = new List<string>(from f in sources
-                                                    select RootPathHelper.MakeRelativePath(f));
+            htmlTemplate.Sources = sources;
 
             htmlTemplate.Execute();
 

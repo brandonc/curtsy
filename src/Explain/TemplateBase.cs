@@ -10,7 +10,7 @@ namespace Explain
         public Func<string, string> GetResourcePath { get; set; }
         public Func<string, string> GetSourcePath { get; set; }
         public List<Section> Sections { get; set; }
-        public List<string> Sources { get; set; }
+        public List<OutputUnit> Sources { get; set; }
 
         public StringBuilder Buffer { get; set; }
 

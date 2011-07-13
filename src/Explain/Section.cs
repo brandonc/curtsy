@@ -13,4 +13,12 @@ namespace Explain
         public int EndLine;
         public int CodeStartLine;
     }
+
+    public class OutputUnit
+    {
+        public string CodeFile;
+        public string Name;
+        public List<Section> Sections;
+        public string SizeFormatted;
+    }
 }

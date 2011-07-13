@@ -29,7 +29,7 @@ namespace Explain
 
         public static readonly string EOL = System.Environment.NewLine;
 
-        // Continue adding characters to the specified token until an unescaped character is encountered
+        // Continues adding characters to the specified token until an unescaped character is encountered
         static void ChompUntil(char until, StreamReader reader, StringBuilder token)
         {
             bool isescaped = false;
@@ -42,7 +42,7 @@ namespace Explain
             } while (reader.Peek() >= 0 && !(c == until && !isescaped));
         }
 
-        // Continue adding characters to the specified token until string is encountered (inclusive of string)
+        // Continues adding characters to the specified token until string is encountered (inclusive of string)
         static void ChompUntil(string until, StreamReader reader, StringBuilder token)
         {
             do
@@ -52,6 +52,7 @@ namespace Explain
             } while (token.Length < until.Length || token.ToString().Substring(token.Length - until.Length, until.Length) != until);
         }
 
+        // Converts a stream of text into a queue of tokens used by the parser
         public static Queue<string> Tokenize(StreamReader reader)
         {
             var token = new StringBuilder();
@@ -78,16 +79,14 @@ namespace Explain
                     continue;
                 }
 
-                // Non-newline white space is the primary signal for the end of a token.
-                if (Char.IsWhiteSpace(c))
+                if (Char.IsWhiteSpace(c)) // Non-newline white space is the primary signal for the end of a token.
                 {
                     pushtoken();
                     continue;
                 }
 
-                // `"` or `@` signals the start of a string literal
                 if (c == STRING_LITERAL || (c == AT && (char)reader.Peek() == STRING_LITERAL))
-                {
+                {   // " or @ signals the start of a string literal
                     pushtoken();
                     token.Append(c);
                     if (c == AT)
@@ -98,9 +97,8 @@ namespace Explain
                     continue;
                 }
 
-                // `'` signals the start of a character literal
                 if (c == CHAR_LITERAL)
-                {
+                {   // ' signals the start of a character literal
                     pushtoken();
                     token.Append(c);
                     ChompUntil(CHAR_LITERAL, reader, token);
@@ -108,9 +106,8 @@ namespace Explain
                     continue;
                 }
 
-                // `/*` signals the start of a multiline comment
                 if (c == FORWARDSLASH && (char)reader.Peek() == SPLAT)
-                {
+                {   // `/*` signals the start of a multiline comment
                     pushtoken();
                     token.Append(c);
                     ChompUntil("*/", reader, token);
@@ -118,9 +115,8 @@ namespace Explain
                     continue;
                 }
 
-                // `//` signals the start of a line comment
                 if (c == FORWARDSLASH && (char)reader.Peek() == FORWARDSLASH)
-                {
+                {   // `//` signals the start of a line comment
                     token.Append(c);
                     ChompUntil(LF, reader, token);
                     while (token[token.Length - 1] == CR || token[token.Length - 1] == LF)
@@ -133,9 +129,8 @@ namespace Explain
                     continue;
                 }
 
-                // These characters are necessary to successfully parse type names later on.
-                if (c == BLOCK_BEGIN ||
-                    c == BLOCK_END ||
+                if (c == BLOCK_BEGIN ||  // These characters become individual tokens and 
+                    c == BLOCK_END ||    // are necessary to successfully parse type names later on.
                     c == GREATERTHAN ||
                     c == LESSTHAN ||
                     c == PAREN_BEGIN ||
@@ -149,8 +144,7 @@ namespace Explain
                     continue;
                 }
 
-                // Making a word
-                token.Append(c);
+                token.Append(c); // Making a word
             }
 
             return result;
@@ -170,7 +164,7 @@ namespace Explain
         readonly string path;
 
         int sourceLineNumber = 0;
-        FoundTypes typeMap;
+        FoundTypes types;
         PathHelper pathHelper;
 
         public void Parse()
@@ -279,34 +273,32 @@ namespace Explain
                     switch (tok)
                     {
                         case "class":
-                            typeMap.Add(typeName(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Class);
+                            types.Add(typeName(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Class);
                             break;
                         case "delegate":
                             skipNewlines();
                             string n = next();
-                            if (n == "{" || n == "(")
+                            if (n == "{" || n == "(") // Indicates anonymous delegate
                             {
-                                // Indicates anonymous delegate
                                 break;
                             }
                             skipGeneric();
-                            typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Delegate);
+                            types.Add(tokens.Peek(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Delegate);
                             break;
                         case "struct":
-                            if (tokens.Peek() == "{" || tokens.Peek() == System.Environment.NewLine)
-                            {
-                                // Indicates generic constraint
+                            if (tokens.Peek() == "{" || tokens.Peek() == System.Environment.NewLine) // Indicates generic constraint
+                            {   
                                 break;
                             }
-                            typeMap.Add(typeName(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Struct);
+                            types.Add(typeName(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Struct);
                             break;
                         case "enum":
                             skipNewlines();
-                            typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Enum);
+                            types.Add(tokens.Peek(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Enum);
                             break;
                         case "interface":
                             skipNewlines();
-                            typeMap.Add(tokens.Peek(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Interface);
+                            types.Add(tokens.Peek(), relpath, this.sourceLineNumber, FoundTypes.TypeHint.Interface);
                             break;
                     }
                 }
@@ -315,7 +307,7 @@ namespace Explain
             }
         }
 
-        // Emit either a comment or code line.
+        // Emit a line by raising events, either comment or code.
         protected void OnEmitLine(string line, bool iscomment)
         {
             if (!iscomment && EmitLine != null)
@@ -324,14 +316,19 @@ namespace Explain
                 EmitCommentLine(line, this.sourceLineNumber);
         }
 
-        public FileParser(string path, FoundTypes typeMap, PathHelper pathHelper)
+        // ### FileParser
+        // File parser does two things: It adds types that it encounters to the specified `FoundTypes`
+        // object and emits lines of code and comments as they are encountered.
+        //
+        // The `FoundTypes` instance will be used later on to hyperlink the files together.
+        public FileParser(string path, FoundTypes foundTypes, PathHelper pathHelper)
         {
             using (StreamReader reader = new StreamReader(path))
             {
                 this.tokens = Lexer.Tokenize(reader);
             }
 
-            this.typeMap = typeMap;
+            this.types = foundTypes;
             this.path = path;
             this.pathHelper = pathHelper;
         }

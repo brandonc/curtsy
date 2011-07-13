@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System;
 namespace Explain
 {
+    // TemplateBase serves as the base class for the object that will generated
+    // by compiling the embedded razor template. The template itself will use the
+    // public members to render its contents.
     public abstract class TemplateBase
     {
-        // These properties are available from within the template
         public string Title { get; set; }
         public Func<string, string> GetResourcePath { get; set; }
         public Func<string, string> GetSourcePath { get; set; }

@@ -15,13 +15,18 @@ using System.Collections;
 
 namespace Explain
 {
+    // This is the frontend for the [explain engine][1].
+    // It accepts a single argument, either a `.cs` file or a `.csproj` file.
+
+    // If the input is a csproj file, that file is probed for compilable cs files.
+
+    // [1]: explain.cs
     class Program
     {
         static FoundTypes _typeMap = new FoundTypes();
 
         static int Main(string[] args)
         {
-            // Explain only expects one argument: the target file. That can be either a .cs file or msbuild .csproj file.
             if (args.Length != 1)
             {
                 PrintUsage();
@@ -43,8 +48,7 @@ namespace Explain
                 case ".cs":
                     sources = new string[] { fi.FullName };
                     break;
-                default:
-                    // Assume MSBuild
+                default: // Assume MSBuild
                     sources = ProbeMSBuildForSources(fi.FullName).ToArray();
                     break;
             }

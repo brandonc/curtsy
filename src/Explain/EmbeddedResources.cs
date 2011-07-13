@@ -12,6 +12,8 @@ namespace Explain
         Type templateType = null;
         string[] clientFiles = { "prettify.js", "explain.css" };
 
+        // Writes each file designated as a client file from the embedded resources folder
+        // into the specified directory, unless that file already exists.
         public void WriteClientFilesTo(string path)
         {
             Directory.CreateDirectory(path);
@@ -44,6 +46,9 @@ namespace Explain
             }
         }
 
+        // Returns an instance of the razor template, compiled from the file stored as an embedded resource.
+        // The first time this method is executed, the Razor template is compiled and stored.
+        // This method will throw an InvalidDataException if the template contains syntax errors.
         public TemplateBase CreateRazorTemplateInstance()
         {
             if (templateType == null)
@@ -78,7 +83,6 @@ namespace Explain
                 var codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
                 var results = codeProvider.CompileAssemblyFromDom(compilerParams, razorResult.GeneratedCode);
 
-                // Check for errors that may have occurred during template generation
                 if (results.Errors.HasErrors)
                 {
                     StringBuilder errors = new StringBuilder();

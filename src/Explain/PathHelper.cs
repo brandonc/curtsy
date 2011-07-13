@@ -6,7 +6,8 @@ using System.IO;
 
 namespace Explain
 {
-    // PathHelper is initialized with a root directory and can make other paths relative to it.
+    // PathHelper is a helper class that accepts a root directory
+    // and can produce relative paths to that directory given another path.
     public class PathHelper
     {
         public string RootPath { get; set; }
@@ -25,7 +26,7 @@ namespace Explain
         {
             if (String.IsNullOrEmpty(rootPath)) throw new ArgumentNullException("absoluteTargetPath");
 
-            RootPath = rootPath;
+            RootPath = rootPath.EndsWith(Path.DirectorySeparatorChar) ? rootPath : rootPath + Path.DirectorySeparatorChar;
         }
     }
 }

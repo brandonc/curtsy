@@ -16,7 +16,7 @@
                 <nav>
                     <table border="0" cellspacing="0">
 							<tr>
-                                <td class="size">8.91 KB</td>
+                                <td class="size">8.64 KB</td>
                                 <td><a class="source" href="curtsy.html">
 								    Curtsy.cs
 							    </a></td>
@@ -98,11 +98,22 @@
 <blockquote>
 <p>A hyperlinked, readable, C#-to-annotated-html documentation generator.</p>
 </blockquote>
-<p>Curtsy is a fork of <a href="http://dontangg.github.com/nocco/">nocco</a>* that does some lexical analysis in order to provide type hyperlinking for c#.</p><p>This page is the result of running Curtsy against its own source file. The source for Curtsy is <a href="https://github.com/brandonc/curtsy">available on GitHub</a>, and released under the MIT license.</p><p>Running this: <code>curtsy WindowsApplication1.csproj</code></p>
+<p>Curtsy is a fork of <a href="http://dontangg.github.com/nocco/">nocco</a> that does some lexical analysis in order to provide type hyperlinking for c#.</p>
+
+<p>This page is the result of running Curtsy against its own source file. The source for Curtsy is <a href="https://github.com/brandonc/curtsy">available on GitHub</a>, and released under the MIT license.</p>
+
+<p>Running this: <code>curtsy WindowsApplication1.csproj</code></p>
 
 <p>will generate linked HTML documentation for the named source files, saving it into a new folder called &ldquo;docs&rdquo;.</p>
+
 						</td>
                         <td class="lines">
+20<br />
+21<br />
+22<br />
+23<br />
+24<br />
+25<br />
 26<br />
 27<br />
 28<br />
@@ -113,12 +124,6 @@
 33<br />
 34<br />
 35<br />
-36<br />
-37<br />
-38<br />
-39<br />
-40<br />
-41<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>using System;
@@ -148,6 +153,12 @@ namespace Curtsy
 
 						</td>
                         <td class="lines">
+36<br />
+37<br />
+38<br />
+39<br />
+40<br />
+41<br />
 42<br />
 43<br />
 44<br />
@@ -223,12 +234,6 @@ namespace Curtsy
 114<br />
 115<br />
 116<br />
-117<br />
-118<br />
-119<br />
-120<br />
-121<br />
-122<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public void Generate(string destinationDirectory)
@@ -324,6 +329,12 @@ length of the file using these units:</p>
 
 						</td>
                         <td class="lines">
+118<br />
+119<br />
+120<br />
+121<br />
+122<br />
+123<br />
 124<br />
 125<br />
 126<br />
@@ -334,12 +345,6 @@ length of the file using these units:</p>
 131<br />
 132<br />
 133<br />
-134<br />
-135<br />
-136<br />
-137<br />
-138<br />
-139<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        static string[] sizes = { &quot;B&quot;, &quot;KB&quot;, &quot;MB&quot;, &quot;GB&quot; };
@@ -370,6 +375,12 @@ and prepare the razor template instance with the data it needs.</p>
 
 						</td>
                         <td class="lines">
+135<br />
+136<br />
+137<br />
+138<br />
+139<br />
+140<br />
 141<br />
 142<br />
 143<br />
@@ -416,12 +427,6 @@ and prepare the razor template instance with the data it needs.</p>
 184<br />
 185<br />
 186<br />
-187<br />
-188<br />
-189<br />
-190<br />
-191<br />
-192<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        void GenerateInternal(List&lt;Section&gt; sections, List&lt;OutputUnit&gt; sources, string codefile, <a href="foundtypes.html">FoundTypes</a> typeMap, string destinationDirectory)
@@ -488,6 +493,12 @@ as the root directory from which to resolve them and write the output &ldquo;doc
 
 						</td>
                         <td class="lines">
+188<br />
+189<br />
+190<br />
+191<br />
+192<br />
+193<br />
 194<br />
 195<br />
 196<br />
@@ -506,12 +517,6 @@ as the root directory from which to resolve them and write the output &ldquo;doc
 209<br />
 210<br />
 211<br />
-212<br />
-213<br />
-214<br />
-215<br />
-216<br />
-217<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public Curtsy(List&lt;string&gt; sources, string rootDirectory)

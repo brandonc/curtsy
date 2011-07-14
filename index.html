@@ -98,13 +98,19 @@
 <blockquote>
 <p>A hyperlinked, readable, C#-to-annotated-html documentation generator.</p>
 </blockquote>
-<p>Curtsy is a fork of <a href="http://dontangg.github.com/nocco/">nocco</a> that does some lexical analysis in order to provide type hyperlinking for c#.</p>
+<p>Curtsy is a fork of <a href="http://dontangg.github.com/nocco/">nocco</a>* that does some lexical analysis in order to provide type hyperlinking for c#.</p>
+
+<p>Nocco is simpler and yet can be run against more programming languages, comparatively speaking. It just doesn&rsquo;t hyperlink the source.</p>
 
 <p>This page is the result of running Curtsy against its own source file. The source for Curtsy is <a href="https://github.com/brandonc/curtsy">available on GitHub</a>, and released under the MIT license.</p>
+
+<p>You can run curtsy either against a <code>.csproj</code> file or against individual source files.</p>
 
 <p>Running this: <code>curtsy WindowsApplication1.csproj</code></p>
 
 <p>will generate linked HTML documentation for the named source files, saving it into a new folder called &ldquo;docs&rdquo;.</p>
+
+<p><small>* nocco is a port of <a href="http://jashkenas.github.com/docco/">docco</a>!</small></p>
 
 						</td>
                         <td class="lines">
@@ -549,16 +555,5 @@ as the root directory from which to resolve them and write the output &ldquo;doc
 			</tbody>
 		</table>
 	</div>
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-12285568-2']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
 </body>
 </html>

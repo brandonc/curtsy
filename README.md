@@ -8,8 +8,7 @@ Curtsy is a fork of [nocco][] that does some lexical analysis in order to provid
 
 Running this: curtsy ClassLibrary1.csproj
 
-will generate linked HTML documentation for the named source files, saving it into a new folder called “docs”.
-
+will generate linked HTML documentation for the named source files, saving it into a new folder called "docs".
 
 ### Caveats ###
 

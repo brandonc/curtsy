@@ -74,8 +74,8 @@ namespace Curtsy
                         end = sourceLineNumber;
                     }
 
-                    if (line.TrimStart(' ', '\t').StartsWith("///"))
-                        return; // Throw away intellisense documentation. It doesn't markdown well at all.
+                    if (line.IndexOfPattern(@"//\s*#(if|else|elif|endif|define|undef|warning|error|line|region|endregion)") == 0)
+                        return; // Discard commented preprocessor commands
 
                     docsText.AppendLine(line.TrimStart(' ', '\t', '/', '*'));
                 };
@@ -136,6 +136,8 @@ namespace Curtsy
         {
             var output = this.RootPathHelper.MakeRelativePath(codefile);
             var subdestination = Path.Combine(destinationDirectory, output);
+            var mdexts = DownBlouse.MarkdownExtensions.AutoLink;
+
             Directory.CreateDirectory(Path.GetDirectoryName(subdestination).ToLower());
 
             string clientPathToRoot = String.Concat(Enumerable.Repeat<string>("../", output.Split(Path.DirectorySeparatorChar).Length - 1));
@@ -149,7 +151,23 @@ namespace Curtsy
 
             foreach (Section s in sections)
             {
-                s.DocsHtml = DownBlouse.DownBlouse.Markdownify(s.DocsHtml);
+                // This block handles the possibility of XML embedded into the comments, signalling
+                // visual studio style xml documentation. Only `remarks` and `summary` are used and everything else
+                // is discarded.
+                MatchData xmlmatches = s.DocsHtml.MatchesPattern(
+                    @"\<summary\>(.+)\<\/summary\>|\<remarks\>(.+)\<\/remarks\>", "s"
+                );
+
+                if (xmlmatches != null && xmlmatches.Count > 3) {
+                    s.DocsHtml = DownBlouse.DownBlouse.Markdownify(xmlmatches[1] + System.Environment.NewLine + System.Environment.NewLine + xmlmatches[3], mdexts);
+                } else if (xmlmatches != null && xmlmatches.Count > 1) {
+                    s.DocsHtml = DownBlouse.DownBlouse.Markdownify(xmlmatches[1], mdexts);
+                } else if (s.DocsHtml.HasPattern(@"\<(example|exception|param|permission|returns|seealso|include)\>")) {
+                    s.DocsHtml = String.Empty;
+                } else {
+                    s.DocsHtml = DownBlouse.DownBlouse.Markdownify(s.DocsHtml, mdexts);
+                }
+
                 s.CodeHtml = System.Web.HttpUtility.HtmlEncode(s.CodeHtml);
 
                 foreach (FoundTypes.TypeInfo type in typeMap)

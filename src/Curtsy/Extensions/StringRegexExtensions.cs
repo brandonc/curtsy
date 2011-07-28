@@ -79,6 +79,9 @@ namespace System
         /// <returns>The position of the capture</returns>
         public int Begin(int index)
         {
+            if (index >= indexcaptures.Count)
+                return -1;
+
             try
             {
                 Capture cap = indexcaptures[index];
@@ -96,6 +99,9 @@ namespace System
         /// <returns>The position of the character immediately following the end of the specified numbered capture</returns>
         public int End(int index)
         {
+            if (index >= indexcaptures.Count)
+                return -1;
+
             try
             {
                 Capture cap = indexcaptures[index];

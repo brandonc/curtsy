@@ -13,7 +13,7 @@ will generate linked HTML documentation for the named source files, saving it in
 
 ### Caveats ###
 
-This is a very early work in progress. Intellisense comments are ignored completely. Much hasn't been tested.
+This is a work in progress.
 
 ### To do ###
 

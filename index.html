@@ -16,13 +16,13 @@
                 <nav>
                     <table border="0" cellspacing="0">
 							<tr>
-                                <td class="size">8.64 KB</td>
+                                <td class="size">9.77 KB</td>
                                 <td><a class="source" href="curtsy.html">
 								    Curtsy.cs
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">37.19 KB</td>
+                                <td class="size">37.36 KB</td>
                                 <td><a class="source" href="extensions/stringregexextensions.html">
 								    Extensions\StringRegexExtensions.cs
 							    </a></td>
@@ -277,8 +277,8 @@ namespace Curtsy
                         end = sourceLineNumber;
                     }
 
-                    if (line.TrimStart(&#39; &#39;, &#39;\t&#39;).StartsWith(&quot;///&quot;))
-                        return; // Throw away intellisense documentation. It doesn&#39;t markdown well at all.
+                    if (line.IndexOfPattern(@&quot;//\s*#(if|else|elif|endif|define|undef|warning|error|line|region|endregion)&quot;) == 0)
+                        return; // Discard commented preprocessor commands
 
                     docsText.AppendLine(line.TrimStart(&#39; &#39;, &#39;\t&#39;, &#39;/&#39;, &#39;*&#39;));
                 };
@@ -395,8 +395,41 @@ and prepare the razor template instance with the data it needs.</p>
 152<br />
 153<br />
 154<br />
-155<br />
-156<br />
+                        </td>
+						<td class="code">
+							<pre><code class='prettyprint'>        void GenerateInternal(List&lt;Section&gt; sections, List&lt;OutputUnit&gt; sources, string codefile, <a href="foundtypes.html">FoundTypes</a> typeMap, string destinationDirectory)
+        {
+            var output = this.RootPathHelper.MakeRelativePath(codefile);
+            var subdestination = Path.Combine(destinationDirectory, output);
+            var mdexts = DownBlouse.MarkdownExtensions.AutoLink;
+
+            Directory.CreateDirectory(Path.GetDirectoryName(subdestination).ToLower());
+
+            string clientPathToRoot = String.Concat(Enumerable.Repeat&lt;string&gt;(&quot;../&quot;, output.Split(Path.DirectorySeparatorChar).Length - 1));
+
+            Func&lt;string, string&gt; getSourcePath = (string s) =&gt;
+            {
+                return Path.Combine(clientPathToRoot, Path.ChangeExtension(s, &quot;.html&quot;).ToLower()).Replace(Path.DirectorySeparatorChar, &#39;/&#39;);
+            };
+
+            string typebounds = @&quot;[\s\(;:,]+&quot;;
+
+            foreach (<a href="section.html">Section</a> s in sections)
+            {
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_5">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_5">&#182;</a>
+							</div>
+							<p>This block handles the possibility of XML embedded into the comments, signalling
+visual studio style xml documentation. Only <code>remarks</code> and <code>summary</code> are used and everything else
+is discarded.</p>
+
+						</td>
+                        <td class="lines">
 157<br />
 158<br />
 159<br />
@@ -427,26 +460,40 @@ and prepare the razor template instance with the data it needs.</p>
 184<br />
 185<br />
 186<br />
+187<br />
+188<br />
+189<br />
+190<br />
+191<br />
+192<br />
+193<br />
+194<br />
+195<br />
+196<br />
+197<br />
+198<br />
+199<br />
+200<br />
+201<br />
+202<br />
+203<br />
+204<br />
                         </td>
 						<td class="code">
-							<pre><code class='prettyprint'>        void GenerateInternal(List&lt;Section&gt; sections, List&lt;OutputUnit&gt; sources, string codefile, <a href="foundtypes.html">FoundTypes</a> typeMap, string destinationDirectory)
-        {
-            var output = this.RootPathHelper.MakeRelativePath(codefile);
-            var subdestination = Path.Combine(destinationDirectory, output);
-            Directory.CreateDirectory(Path.GetDirectoryName(subdestination).ToLower());
+							<pre><code class='prettyprint'>                <a href="extensions/stringregexextensions.html">MatchData</a> xmlmatches = s.DocsHtml.MatchesPattern(
+                    @&quot;\&lt;summary\&gt;(.+)\&lt;\/summary\&gt;|\&lt;remarks\&gt;(.+)\&lt;\/remarks\&gt;&quot;, &quot;s&quot;
+                );
 
-            string clientPathToRoot = String.Concat(Enumerable.Repeat&lt;string&gt;(&quot;../&quot;, output.Split(Path.DirectorySeparatorChar).Length - 1));
+                if (xmlmatches != null &amp;&amp; xmlmatches.Count &gt; 3) {
+                    s.DocsHtml = DownBlouse.DownBlouse.Markdownify(xmlmatches[1] + System.Environment.NewLine + System.Environment.NewLine + xmlmatches[3], mdexts);
+                } else if (xmlmatches != null &amp;&amp; xmlmatches.Count &gt; 1) {
+                    s.DocsHtml = DownBlouse.DownBlouse.Markdownify(xmlmatches[1], mdexts);
+                } else if (s.DocsHtml.HasPattern(@&quot;\&lt;(example|exception|param|permission|returns|seealso|include)\&gt;&quot;)) {
+                    s.DocsHtml = String.Empty;
+                } else {
+                    s.DocsHtml = DownBlouse.DownBlouse.Markdownify(s.DocsHtml, mdexts);
+                }
 
-            Func&lt;string, string&gt; getSourcePath = (string s) =&gt;
-            {
-                return Path.Combine(clientPathToRoot, Path.ChangeExtension(s, &quot;.html&quot;).ToLower()).Replace(Path.DirectorySeparatorChar, &#39;/&#39;);
-            };
-
-            string typebounds = @&quot;[\s\(;:,]+&quot;;
-
-            foreach (<a href="section.html">Section</a> s in sections)
-            {
-                s.DocsHtml = DownBlouse.DownBlouse.Markdownify(s.DocsHtml);
                 s.CodeHtml = System.Web.HttpUtility.HtmlEncode(s.CodeHtml);
 
                 foreach (FoundTypes.TypeInfo type in typeMap)
@@ -483,40 +530,40 @@ and prepare the razor template instance with the data it needs.</p>
 </code></pre>
 						</td>
 					</tr>
-					<tr id="section_5">
+					<tr id="section_6">
 						<td class="docs">
 							<div class="pilwrap">
-								<a class="pilcrow" href="#section_5">&#182;</a>
+								<a class="pilcrow" href="#section_6">&#182;</a>
 							</div>
 							<p>Create a new instance of the Curtsy engine. You have to specify the individual files to be used as well
 as the root directory from which to resolve them and write the output &ldquo;docs&rdquo; folder</p>
 
 						</td>
                         <td class="lines">
-188<br />
-189<br />
-190<br />
-191<br />
-192<br />
-193<br />
-194<br />
-195<br />
-196<br />
-197<br />
-198<br />
-199<br />
-200<br />
-201<br />
-202<br />
-203<br />
-204<br />
-205<br />
 206<br />
 207<br />
 208<br />
 209<br />
 210<br />
 211<br />
+212<br />
+213<br />
+214<br />
+215<br />
+216<br />
+217<br />
+218<br />
+219<br />
+220<br />
+221<br />
+222<br />
+223<br />
+224<br />
+225<br />
+226<br />
+227<br />
+228<br />
+229<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public Curtsy(List&lt;string&gt; sources, string rootDirectory)

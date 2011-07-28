@@ -16,13 +16,13 @@
                 <nav>
                     <table border="0" cellspacing="0">
 							<tr>
-                                <td class="size">8.64 KB</td>
+                                <td class="size">9.77 KB</td>
                                 <td><a class="source" href="../curtsy.html">
 								    Curtsy.cs
 							    </a></td>
                             </tr>
 							<tr>
-                                <td class="size">37.19 KB</td>
+                                <td class="size">37.36 KB</td>
                                 <td><a class="source" href="../extensions/stringregexextensions.html">
 								    Extensions\StringRegexExtensions.cs
 							    </a></td>
@@ -96,8 +96,6 @@
 							</div>
 							<p>Uncomment the next line depending on your environment (Mono, Visual Studio 2008, .NET 3.5)</p>
 
-<h1>define NET35</h1>
-
 <p>Use .NET 4.0 to enable thread safe cacheing.</p>
 
 <p>Copyright &copy;2011 Brandon Croft and contributors</p>
@@ -135,7 +133,11 @@ namespace System
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_2">&#182;</a>
 							</div>
-							
+							<p>A simplified collection of regex groups and captures.</p>
+
+<p>See <a href="http://stackoverflow.com/questions/2250335/differences-among-net-capture-group-match/2251774#2251774">http://stackoverflow.com/questions/2250335/differences-among-net-capture-group-match/2251774#2251774</a> for a good
+explanation of why MatchCollection is so complicated.</p>
+
 						</td>
                         <td class="lines">
 34<br />
@@ -159,7 +161,8 @@ namespace System
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_3">&#182;</a>
 							</div>
-							
+							<p>Gets a numbered capture value. The first index (0) is always the entire match.</p>
+
 						</td>
                         <td class="lines">
 44<br />
@@ -201,7 +204,8 @@ namespace System
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_4">&#182;</a>
 							</div>
-							
+							<p>Gets a named capture value.</p>
+
 						</td>
                         <td class="lines">
 63<br />
@@ -239,7 +243,8 @@ namespace System
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_5">&#182;</a>
 							</div>
-							
+							<p>Gets the position of the specifed numbered capture</p>
+
 						</td>
                         <td class="lines">
 80<br />
@@ -255,10 +260,16 @@ namespace System
 90<br />
 91<br />
 92<br />
+93<br />
+94<br />
+95<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public int Begin(int index)
         {
+            if (index &gt;= indexcaptures.Count)
+                return -1;
+
             try
             {
                 Capture cap = indexcaptures[index];
@@ -277,12 +288,10 @@ namespace System
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_6">&#182;</a>
 							</div>
-							
+							<p>Gets the position of the character immediately following the end of the specified numbered capture</p>
+
 						</td>
                         <td class="lines">
-97<br />
-98<br />
-99<br />
 100<br />
 101<br />
 102<br />
@@ -293,10 +302,19 @@ namespace System
 107<br />
 108<br />
 109<br />
+110<br />
+111<br />
+112<br />
+113<br />
+114<br />
+115<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public int End(int index)
         {
+            if (index &gt;= indexcaptures.Count)
+                return -1;
+
             try
             {
                 Capture cap = indexcaptures[index];
@@ -315,19 +333,20 @@ namespace System
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_7">&#182;</a>
 							</div>
-							
+							<p>Gets the position of the named capture</p>
+
 						</td>
                         <td class="lines">
-114<br />
-115<br />
-116<br />
-117<br />
-118<br />
-119<br />
 120<br />
 121<br />
 122<br />
 123<br />
+124<br />
+125<br />
+126<br />
+127<br />
+128<br />
+129<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public int Begin(string name)
@@ -347,19 +366,20 @@ namespace System
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_8">&#182;</a>
 							</div>
-							
+							<p>Gets the position of the character immediately following the end of the specified named capture</p>
+
 						</td>
                         <td class="lines">
-128<br />
-129<br />
-130<br />
-131<br />
-132<br />
-133<br />
 134<br />
 135<br />
 136<br />
 137<br />
+138<br />
+139<br />
+140<br />
+141<br />
+142<br />
+143<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public int End(string name)
@@ -379,15 +399,16 @@ namespace System
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_9">&#182;</a>
 							</div>
-							
+							<p>Gets the total number of captures</p>
+
 						</td>
                         <td class="lines">
-140<br />
-141<br />
-142<br />
-143<br />
-144<br />
-145<br />
+146<br />
+147<br />
+148<br />
+149<br />
+150<br />
+151<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public int Count
@@ -403,15 +424,16 @@ namespace System
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_10">&#182;</a>
 							</div>
-							
+							<p>Gets the total number of numbered captures</p>
+
 						</td>
                         <td class="lines">
-148<br />
-149<br />
-150<br />
-151<br />
-152<br />
-153<br />
+154<br />
+155<br />
+156<br />
+157<br />
+158<br />
+159<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public int MatchCount
@@ -427,15 +449,10 @@ namespace System
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_11">&#182;</a>
 							</div>
-							
+							<p>Retrieves an array of capture names from the matches.</p>
+
 						</td>
                         <td class="lines">
-158<br />
-159<br />
-160<br />
-161<br />
-162<br />
-163<br />
 164<br />
 165<br />
 166<br />
@@ -455,6 +472,12 @@ namespace System
 180<br />
 181<br />
 182<br />
+183<br />
+184<br />
+185<br />
+186<br />
+187<br />
+188<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public string[] GetNames()
@@ -494,12 +517,6 @@ that multiple captures in the same group are overwritten.</p>
 
 						</td>
                         <td class="lines">
-184<br />
-185<br />
-186<br />
-187<br />
-188<br />
-189<br />
 190<br />
 191<br />
 192<br />
@@ -511,6 +528,12 @@ that multiple captures in the same group are overwritten.</p>
 198<br />
 199<br />
 200<br />
+201<br />
+202<br />
+203<br />
+204<br />
+205<br />
+206<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>                if (Int32.TryParse(name, out tryint))
@@ -541,12 +564,12 @@ that multiple captures in the same group are overwritten.</p>
 
 						</td>
                         <td class="lines">
-201<br />
-202<br />
-203<br />
-204<br />
-205<br />
-206<br />
+207<br />
+208<br />
+209<br />
+210<br />
+211<br />
+212<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>            foreach (Capture capture in indexcaptures)
@@ -566,12 +589,6 @@ that multiple captures in the same group are overwritten.</p>
 
 						</td>
                         <td class="lines">
-207<br />
-208<br />
-209<br />
-210<br />
-211<br />
-212<br />
 213<br />
 214<br />
 215<br />
@@ -651,6 +668,12 @@ that multiple captures in the same group are overwritten.</p>
 289<br />
 290<br />
 291<br />
+292<br />
+293<br />
+294<br />
+295<br />
+296<br />
+297<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>            if (namedcaptures != null)
@@ -745,15 +768,10 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_15">&#182;</a>
 							</div>
-							
+							<p>The number of Regex objects that occupy the cache.</p>
+
 						</td>
                         <td class="lines">
-294<br />
-295<br />
-296<br />
-297<br />
-298<br />
-299<br />
 300<br />
 301<br />
 302<br />
@@ -778,6 +796,12 @@ that multiple captures in the same group are overwritten.</p>
 321<br />
 322<br />
 323<br />
+324<br />
+325<br />
+326<br />
+327<br />
+328<br />
+329<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static int CacheCount
@@ -817,15 +841,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_16">&#182;</a>
 							</div>
-							
+							<p>Tests whether this string matches a string regex pattern</p>
+
 						</td>
                         <td class="lines">
-328<br />
-329<br />
-330<br />
-331<br />
-332<br />
-333<br />
+334<br />
+335<br />
+336<br />
+337<br />
+338<br />
+339<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static bool HasPattern(this string input, string pattern)
@@ -841,15 +866,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_17">&#182;</a>
 							</div>
-							
+							<p>Tests whether this string matches a string regex pattern with optional regex options.</p>
+
 						</td>
                         <td class="lines">
-338<br />
-339<br />
-340<br />
-341<br />
-342<br />
-343<br />
+344<br />
+345<br />
+346<br />
+347<br />
+348<br />
+349<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static bool HasPattern(this string input, string pattern, string options)
@@ -865,15 +891,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_18">&#182;</a>
 							</div>
-							
+							<p>Tests whether this string matches a string regex pattern</p>
+
 						</td>
                         <td class="lines">
-347<br />
-348<br />
-349<br />
-350<br />
-351<br />
-352<br />
+353<br />
+354<br />
+355<br />
+356<br />
+357<br />
+358<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static bool HasPattern(this string input, string pattern, int startat)
@@ -889,15 +916,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_19">&#182;</a>
 							</div>
-							
+							<p>Tests whether this string matches a string regex pattern</p>
+
 						</td>
                         <td class="lines">
-357<br />
-358<br />
-359<br />
-360<br />
-361<br />
-362<br />
+363<br />
+364<br />
+365<br />
+366<br />
+367<br />
+368<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static bool HasPattern(this string input, string pattern, string options, int startat)
@@ -913,15 +941,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_20">&#182;</a>
 							</div>
-							
+							<p>Returns matches within the string that match a specified regex pattern</p>
+
 						</td>
                         <td class="lines">
-367<br />
-368<br />
-369<br />
-370<br />
-371<br />
-372<br />
+373<br />
+374<br />
+375<br />
+376<br />
+377<br />
+378<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static MatchData MatchesPattern(this string input, string pattern)
@@ -937,16 +966,17 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_21">&#182;</a>
 							</div>
-							
+							<p>Returns matches within the string that match a specified regex pattern with the specified regex options</p>
+
 						</td>
                         <td class="lines">
-378<br />
-379<br />
-380<br />
-381<br />
-382<br />
-383<br />
 384<br />
+385<br />
+386<br />
+387<br />
+388<br />
+389<br />
+390<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static MatchData MatchesPattern(this string input, string pattern, string options)
@@ -963,15 +993,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_22">&#182;</a>
 							</div>
-							
+							<p>Returns matches within the string that match a specified regex pattern beginning at the specified offset</p>
+
 						</td>
                         <td class="lines">
-390<br />
-391<br />
-392<br />
-393<br />
-394<br />
-395<br />
+396<br />
+397<br />
+398<br />
+399<br />
+400<br />
+401<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static MatchData MatchesPattern(this string input, string pattern, int startat)
@@ -987,16 +1018,17 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_23">&#182;</a>
 							</div>
-							
+							<p>Returns matches within the string that match a specified regex pattern beginning at the specified offset with the specified regex options</p>
+
 						</td>
                         <td class="lines">
-402<br />
-403<br />
-404<br />
-405<br />
-406<br />
-407<br />
 408<br />
+409<br />
+410<br />
+411<br />
+412<br />
+413<br />
+414<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static MatchData MatchesPattern(this string input, string pattern, string options, int startat)
@@ -1013,15 +1045,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_24">&#182;</a>
 							</div>
-							
+							<p>Returns a copy of this string with the first occurrence of the specified regex pattern replaced with the specified replacement text</p>
+
 						</td>
                         <td class="lines">
-414<br />
-415<br />
-416<br />
-417<br />
-418<br />
-419<br />
+420<br />
+421<br />
+422<br />
+423<br />
+424<br />
+425<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string Sub(this string input, string pattern, string replacement)
@@ -1037,15 +1070,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_25">&#182;</a>
 							</div>
-							
+							<p>Returns a copy of this string with the first occurrence of the specified regex pattern replaced with the specified replacement text and options</p>
+
 						</td>
                         <td class="lines">
-426<br />
-427<br />
-428<br />
-429<br />
-430<br />
-431<br />
+432<br />
+433<br />
+434<br />
+435<br />
+436<br />
+437<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string Sub(this string input, string pattern, string options, string replacement)
@@ -1061,15 +1095,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_26">&#182;</a>
 							</div>
-							
+							<p>Returns a copy of this string with the first occurrence of the specified regex pattern replaced with the specified replacement text</p>
+
 						</td>
                         <td class="lines">
-437<br />
-438<br />
-439<br />
-440<br />
-441<br />
-442<br />
+443<br />
+444<br />
+445<br />
+446<br />
+447<br />
+448<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string Sub(this string input, string pattern, Func&lt;Match, string&gt; evaluator)
@@ -1085,15 +1120,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_27">&#182;</a>
 							</div>
-							
+							<p>Returns a copy of this string with the first occurrence of the specified regex pattern replaced with the specified replacement text and options</p>
+
 						</td>
                         <td class="lines">
-449<br />
-450<br />
-451<br />
-452<br />
-453<br />
-454<br />
+455<br />
+456<br />
+457<br />
+458<br />
+459<br />
+460<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string Sub(this string input, string pattern, string options, Func&lt;Match, string&gt; evaluator)
@@ -1109,15 +1145,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_28">&#182;</a>
 							</div>
-							
+							<p>Returns a copy of this string with all occurrences of the specified regex pattern replaced with the specified replacement text</p>
+
 						</td>
                         <td class="lines">
-460<br />
-461<br />
-462<br />
-463<br />
-464<br />
-465<br />
+466<br />
+467<br />
+468<br />
+469<br />
+470<br />
+471<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string GSub(this string input, string pattern, string replacement)
@@ -1133,15 +1170,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_29">&#182;</a>
 							</div>
-							
+							<p>Returns a copy of this string with all occurrences of the specified regex pattern and options replaced with the specified replacement text</p>
+
 						</td>
                         <td class="lines">
-472<br />
-473<br />
-474<br />
-475<br />
-476<br />
-477<br />
+478<br />
+479<br />
+480<br />
+481<br />
+482<br />
+483<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string GSub(this string input, string pattern, string options, string replacement)
@@ -1157,15 +1195,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_30">&#182;</a>
 							</div>
-							
+							<p>Returns a copy of this string with all occurrences of the specified regex pattern replaced with the text returned from the given function</p>
+
 						</td>
                         <td class="lines">
-483<br />
-484<br />
-485<br />
-486<br />
-487<br />
-488<br />
+489<br />
+490<br />
+491<br />
+492<br />
+493<br />
+494<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string GSub(this string input, string pattern, Func&lt;Match, string&gt; evaluator)
@@ -1181,15 +1220,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_31">&#182;</a>
 							</div>
-							
+							<p>Returns a copy of this string with all occurrences of the specified regex pattern and options replaced with the text returned from the given function</p>
+
 						</td>
                         <td class="lines">
-495<br />
-496<br />
-497<br />
-498<br />
-499<br />
-500<br />
+501<br />
+502<br />
+503<br />
+504<br />
+505<br />
+506<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string GSub(this string input, string pattern, string options, Func&lt;Match, string&gt; evaluator)
@@ -1205,15 +1245,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_32">&#182;</a>
 							</div>
-							
+							<p>Returns the first index of the specified regex pattern</p>
+
 						</td>
                         <td class="lines">
-505<br />
-506<br />
-507<br />
-508<br />
-509<br />
-510<br />
+511<br />
+512<br />
+513<br />
+514<br />
+515<br />
+516<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static int IndexOfPattern(this string input, string pattern)
@@ -1229,15 +1270,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_33">&#182;</a>
 							</div>
-							
+							<p>Returns the first index of the specified regex pattern and options</p>
+
 						</td>
                         <td class="lines">
-516<br />
-517<br />
-518<br />
-519<br />
-520<br />
-521<br />
+522<br />
+523<br />
+524<br />
+525<br />
+526<br />
+527<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static int IndexOfPattern(this string input, string pattern, string options)
@@ -1253,15 +1295,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_34">&#182;</a>
 							</div>
-							
+							<p>Returns the first index of the specified regex pattern after the specified position</p>
+
 						</td>
                         <td class="lines">
-527<br />
-528<br />
-529<br />
-530<br />
-531<br />
-532<br />
+533<br />
+534<br />
+535<br />
+536<br />
+537<br />
+538<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static int IndexOfPattern(this string input, string pattern, int startat)
@@ -1277,15 +1320,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_35">&#182;</a>
 							</div>
-							
+							<p>Returns the first index of the specified regex pattern and options after the specified position</p>
+
 						</td>
                         <td class="lines">
-539<br />
-540<br />
-541<br />
-542<br />
-543<br />
-544<br />
+545<br />
+546<br />
+547<br />
+548<br />
+549<br />
+550<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static int IndexOfPattern(this string input, string pattern, string options, int startat)
@@ -1301,15 +1345,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_36">&#182;</a>
 							</div>
-							
+							<p>Returns the last index of the specified regex pattern</p>
+
 						</td>
                         <td class="lines">
-549<br />
-550<br />
-551<br />
-552<br />
-553<br />
-554<br />
+555<br />
+556<br />
+557<br />
+558<br />
+559<br />
+560<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static int LastIndexOfPattern(this string input, string pattern)
@@ -1325,16 +1370,17 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_37">&#182;</a>
 							</div>
-							
+							<p>Returns the last index of the specified regex pattern</p>
+
 						</td>
                         <td class="lines">
-560<br />
-561<br />
-562<br />
-563<br />
-564<br />
-565<br />
 566<br />
+567<br />
+568<br />
+569<br />
+570<br />
+571<br />
+572<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static int LastIndexOfPattern(this string input, string pattern, string options)
@@ -1351,15 +1397,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_38">&#182;</a>
 							</div>
-							
+							<p>Return the value of the first match of the specified regex pattern</p>
+
 						</td>
                         <td class="lines">
-571<br />
-572<br />
-573<br />
-574<br />
-575<br />
-576<br />
+577<br />
+578<br />
+579<br />
+580<br />
+581<br />
+582<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string FindPattern(this string input, string pattern)
@@ -1375,15 +1422,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_39">&#182;</a>
 							</div>
-							
+							<p>Return the value of the first match of the specified regex pattern</p>
+
 						</td>
                         <td class="lines">
-582<br />
-583<br />
-584<br />
-585<br />
-586<br />
-587<br />
+588<br />
+589<br />
+590<br />
+591<br />
+592<br />
+593<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string FindPattern(this string input, string pattern, string options)
@@ -1399,15 +1447,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_40">&#182;</a>
 							</div>
-							
+							<p>Return the value of the specified numbered capture of the first match of the specified regex pattern</p>
+
 						</td>
                         <td class="lines">
-593<br />
-594<br />
-595<br />
-596<br />
-597<br />
-598<br />
+599<br />
+600<br />
+601<br />
+602<br />
+603<br />
+604<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string FindPattern(this string input, string pattern, int capture)
@@ -1423,15 +1472,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_41">&#182;</a>
 							</div>
-							
+							<p>Return the value of the specified numbered capture of the first match of the specified regex pattern</p>
+
 						</td>
                         <td class="lines">
-605<br />
-606<br />
-607<br />
-608<br />
-609<br />
-610<br />
+611<br />
+612<br />
+613<br />
+614<br />
+615<br />
+616<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string FindPattern(this string input, string pattern, string options, int capture)
@@ -1447,15 +1497,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_42">&#182;</a>
 							</div>
-							
+							<p>Partition this string into the head, match value, and tail according to the specified regex value</p>
+
 						</td>
                         <td class="lines">
-615<br />
-616<br />
-617<br />
-618<br />
-619<br />
-620<br />
+621<br />
+622<br />
+623<br />
+624<br />
+625<br />
+626<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string[] Partition(this string input, string pattern)
@@ -1471,19 +1522,20 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_43">&#182;</a>
 							</div>
-							
+							<p>Partition this string into the head, match value, and tail according to the specified regex value</p>
+
 						</td>
                         <td class="lines">
-626<br />
-627<br />
-628<br />
-629<br />
-630<br />
-631<br />
 632<br />
 633<br />
 634<br />
 635<br />
+636<br />
+637<br />
+638<br />
+639<br />
+640<br />
+641<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static string[] Partition(this string input, string pattern, string options)
@@ -1503,15 +1555,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_44">&#182;</a>
 							</div>
-							
+							<p>Scans this string for the specified pattern, and calls the specified function for each match.</p>
+
 						</td>
                         <td class="lines">
-641<br />
-642<br />
-643<br />
-644<br />
-645<br />
-646<br />
+647<br />
+648<br />
+649<br />
+650<br />
+651<br />
+652<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static void Scan(this string input, string pattern, Action&lt;string&gt; each)
@@ -1527,15 +1580,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_45">&#182;</a>
 							</div>
-							
+							<p>Scans this string for the specified pattern which can contains two capturing groups or a group with one or more subgroups. Each time the pattern is encountered, the specified function is invoked with the first two captures.</p>
+
 						</td>
                         <td class="lines">
-651<br />
-652<br />
-653<br />
-654<br />
-655<br />
-656<br />
+657<br />
+658<br />
+659<br />
+660<br />
+661<br />
+662<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static void Scan(this string input, string pattern, Action&lt;string, string&gt; each)
@@ -1551,15 +1605,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_46">&#182;</a>
 							</div>
-							
+							<p>Scans this string for the specified pattern which can contain three capturing groups or a group with one or more subgroups. Each time the pattern is encountered, the specified function is invoked with the first three captures specified.</p>
+
 						</td>
                         <td class="lines">
-661<br />
-662<br />
-663<br />
-664<br />
-665<br />
-666<br />
+667<br />
+668<br />
+669<br />
+670<br />
+671<br />
+672<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static void Scan(this string input, string pattern, Action&lt;string, string, string&gt; each)
@@ -1575,15 +1630,16 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_47">&#182;</a>
 							</div>
-							
+							<p>Scans this string for the specified pattern which can contain four capturing groups or a group with one or more subgroups. Each time the pattern is encountered, the specified function is invoked with the first four captures specified.</p>
+
 						</td>
                         <td class="lines">
-671<br />
-672<br />
-673<br />
-674<br />
-675<br />
-676<br />
+677<br />
+678<br />
+679<br />
+680<br />
+681<br />
+682<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static void Scan(this string input, string pattern, Action&lt;string, string, string, string&gt; each)
@@ -1599,19 +1655,20 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_48">&#182;</a>
 							</div>
-							
+							<p>Scans this string for the specified pattern and options, and calls the specified function for each match.</p>
+
 						</td>
                         <td class="lines">
-683<br />
-684<br />
-685<br />
-686<br />
-687<br />
-688<br />
 689<br />
 690<br />
 691<br />
 692<br />
+693<br />
+694<br />
+695<br />
+696<br />
+697<br />
+698<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static void Scan(this string input, string pattern, string options, Action&lt;string&gt; each)
@@ -1631,15 +1688,10 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_49">&#182;</a>
 							</div>
-							
+							<p>Scans this string for the specified pattern and options which can contains two capturing groups or a group with one or more subgroups. Each time the pattern is encountered, the specified function is invoked with the first two captures.</p>
+
 						</td>
                         <td class="lines">
-698<br />
-699<br />
-700<br />
-701<br />
-702<br />
-703<br />
 704<br />
 705<br />
 706<br />
@@ -1647,6 +1699,12 @@ that multiple captures in the same group are overwritten.</p>
 708<br />
 709<br />
 710<br />
+711<br />
+712<br />
+713<br />
+714<br />
+715<br />
+716<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static void Scan(this string input, string pattern, string options, Action&lt;string, string&gt; each)
@@ -1669,15 +1727,10 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_50">&#182;</a>
 							</div>
-							
+							<p>Scans this string for the specified pattern and options which can contain three capturing groups or a group with one or more subgroups. Each time the pattern is encountered, the specified function is invoked with the first three captures specified.</p>
+
 						</td>
                         <td class="lines">
-716<br />
-717<br />
-718<br />
-719<br />
-720<br />
-721<br />
 722<br />
 723<br />
 724<br />
@@ -1687,6 +1740,12 @@ that multiple captures in the same group are overwritten.</p>
 728<br />
 729<br />
 730<br />
+731<br />
+732<br />
+733<br />
+734<br />
+735<br />
+736<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static void Scan(this string input, string pattern, string options, Action&lt;string, string, string&gt; each)
@@ -1711,15 +1770,10 @@ that multiple captures in the same group are overwritten.</p>
 							<div class="pilwrap">
 								<a class="pilcrow" href="#section_51">&#182;</a>
 							</div>
-							
+							<p>Scans this string for the specified pattern and options which can contain four capturing groups or a group with one or more subgroups. Each time the pattern is encountered, the specified function is invoked with the first four captures specified.</p>
+
 						</td>
                         <td class="lines">
-736<br />
-737<br />
-738<br />
-739<br />
-740<br />
-741<br />
 742<br />
 743<br />
 744<br />
@@ -1731,6 +1785,12 @@ that multiple captures in the same group are overwritten.</p>
 750<br />
 751<br />
 752<br />
+753<br />
+754<br />
+755<br />
+756<br />
+757<br />
+758<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        public static void Scan(this string input, string pattern, string options, Action&lt;string, string, string, string&gt; each)
@@ -1761,12 +1821,6 @@ that multiple captures in the same group are overwritten.</p>
 
 						</td>
                         <td class="lines">
-753<br />
-754<br />
-755<br />
-756<br />
-757<br />
-758<br />
 759<br />
 760<br />
 761<br />
@@ -1785,6 +1839,12 @@ that multiple captures in the same group are overwritten.</p>
 774<br />
 775<br />
 776<br />
+777<br />
+778<br />
+779<br />
+780<br />
+781<br />
+782<br />
                         </td>
 						<td class="code">
 							<pre><code class='prettyprint'>        static MatchData MatchPattern(this string input, string pattern)
